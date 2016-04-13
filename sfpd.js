@@ -97,13 +97,35 @@ function getIncidents(array) {
 var filterFormSubmitBtn = window.document.getElementById('filterSubmit');
 
 filterFormSubmitBtn.addEventListener('click', function(e) { 
+
 	e.preventDefault();
+	
 	var form = window.document.getElementById('filterForm');
-	var selectedCategory = form.category.value;
-	var formElements = [];
+	var urlParameters = [];
+
 	for (var i = 0; i < form.elements.length - 1; i++) {
-		console.log(form.elements[i].value);
+
+		var el = form.elements[i];
+		var urlParam = {};
+		urlParam[el.name] = [];
+
+		if (typeof el.selectedOptions != 'undefined' && el.selectedOptions.length > 0) {
+			var options = el.selectedOptions;
+			urlParam[el.name] = [];
+			for (var j = 0; j < options.length; j++) {
+				urlParam[el.name].push(options[j].value);
+			}
+		} else if (el.value) {
+			urlParam[el.name].push(form.elements[i].value);
+		}
+
+		if (urlParam[el.name].length > 0) {
+			urlParameters.push(urlParam);
+		}
+
 	}
+	
+	console.log('urlParameters', urlParameters);
 
 });
 
