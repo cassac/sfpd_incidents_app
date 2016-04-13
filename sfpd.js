@@ -84,7 +84,7 @@ function createMenus(array) {
 		populateMenus(menuTypes[menu], menu);
 	}
 
-};
+}
 
 function getIncidents(array) {
 	incidents = [];
@@ -93,6 +93,20 @@ function getIncidents(array) {
 	}
 	return incidents;
 }
+
+var filterFormSubmitBtn = window.document.getElementById('filterSubmit');
+
+filterFormSubmitBtn.addEventListener('click', function(e) { 
+	e.preventDefault();
+	var form = window.document.getElementById('filterForm');
+	var selectedCategory = form.category.value;
+	var formElements = [];
+	for (var i = 0; i < form.elements.length - 1; i++) {
+		console.log(form.elements[i].value);
+	}
+
+});
+
 
 
 requestData(BASE_URL, createMenus);
