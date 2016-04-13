@@ -24,7 +24,7 @@ function Incident(address, category, date, dayofweek, descript,
 }
 
 Incident.prototype.report = function(incident) {
-	console.log( 'On', this.date, this.dayofweek, 'at', this.time,'a\nin the',
+	console.log('On', this.date, this.dayofweek, 'at', this.time,'a\nin the',
 		this.pddistrict, 'there was a(n)', this.category,'incident.')
 }
 
@@ -36,16 +36,17 @@ function getIncidentObj(incident) {
 	return newIncident;
 }
 
-function loadData(url, f) {
+function requestData(url, f) {
+	
 	var xhttp = new XMLHttpRequest();
+	
 	xhttp.onreadystatechange = function() {
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
 			var data = JSON.parse(xhttp.responseText);
 			f(data);
-			var hey = data.map(function(incident) { return getIncidentObj(incident); });
-			hey[0].report();
 		}
 	};
+
 	xhttp.open('GET', url, true);
 	xhttp.send();
 
@@ -85,5 +86,14 @@ function createMenus(array) {
 
 };
 
+function getIncidents(array) {
+	incidents = [];
+	for (var incident in array) {
+		incidents.push(array[incident]);
+	}
+	return incidents;
+}
 
-loadData(BASE_URL, createMenus);
+
+requestData(BASE_URL, createMenus);
+requestData(BASE_URL, getIncidents);
