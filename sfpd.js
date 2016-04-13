@@ -17,18 +17,39 @@ function loadData(url, f) {
 
 };
 
-function makeMenus(param) {
-	var menu = '<select id="' + param + '"><option value="--">' + param + '</option></select>';
-	var filters = window.document.getElementById('filters');
-	filters.innerHTML += menu;
+function generateHtmlMenuOption(item) {
+	return '<option value="' + item + '">' + item + '</option>';
 }
 
-function populateMenus(array) {
-	params = Object.keys(array[0]);
-	params.map(makeMenus);
-	var category = window.document.getElementById('location');
-	console.log(category);
+function populateMenus(array, menuType) {
+	var options = array.map(function(item) { return generateHtmlMenuOption(item); });
+	var filters = window.document.getElementById(menuType);
+	filters.innerHTML += options;
+}
+
+function createMenus(array) {
+
+	var menuTypes = {
+		category: [],
+		dayofweek: [],
+		pddistrict: [],
+		resolution: []
+	}
+
+	for (var item in array) {
+		var incident = array[item];
+		for (var type in menuTypes) {
+			if (menuTypes[type].indexOf(incident[type]) === -1) {
+				menuTypes[type].push(incident[type]);
+			}
+		}
+	}
+	
+	for (var menu in menuTypes) {
+		populateMenus(menuTypes[menu], menu);
+	}
+
 };
 
 
-loadData(BASE_URL, populateMenus);
+loadData(BASE_URL, createMenus);
