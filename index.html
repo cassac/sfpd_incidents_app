@@ -10,16 +10,24 @@
   <div>
     <form id='filterForm'>
       Category:<br>
-    	<select id='category' name='category' multiple><option value="">All</option></select>
+    	<select id='category' name='category' multiple>
+        <option value="">All</option>
+      </select>
       <br>
       Day of Week:<br>
-    	<select id='dayofweek' name='dayofweek' multiple><option value="">All</option></select>
+    	<select id='dayofweek' name='dayofweek' multiple>
+        <option value="">All</option>
+      </select>
       <br>
       District:<br>
-    	<select id='pddistrict' name='pddistrict' multiple><option value="">All</option></select>
+    	<select id='pddistrict' name='pddistrict' multiple>
+        <option value="">All</option>
+      </select>
       <br>
       Resoultion:<br>
-    	<select id='resolution' name='resolution' multiple><option value="">All</option></select>
+    	<select id='resolution' name='resolution' multiple>
+        <option value="">All</option>
+      </select>
       <br>
       Date Range:<br>
       <input id='dateRangeStart' name='dateRangeStart' type='date' size='6' placeholder='ex. 2015-01-01'>
@@ -28,6 +36,19 @@
       Time Range:<br>
       <input id='timeRangeStart' name='timeRangeStart' type='time' size='4' placeholder='ex. 10:00'>
       <input id='timeRangeEnd' name='timeRangeEnd' type='time' size='4' placeholder='ex. 19:00'>
+      <br>
+      Output Limit:
+      <br>
+      <select id='limit' name='limit'>
+        <option value="10">10</option>
+        <option value="100">100</option>
+        <option value="500">500</option>
+        <option value="1000">1000</option>
+        <option value="5000">5000</option>
+        <option value="10000">10000</option>
+        <option value="25000">25000</option>
+        <option value="50000">50000</option>
+      </select>
       <br>
       <input id='filterSubmit' type='submit' value='Submit'>
     </form>
