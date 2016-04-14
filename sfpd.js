@@ -102,45 +102,112 @@ var filterFormSubmitBtn = window.document.getElementById('filterSubmit');
 
 filterFormSubmitBtn.addEventListener('click', function(e) { 
 
+	var form = window.document.getElementById('filterForm');
+
 	e.preventDefault();
-	parseForm();
+	parseForm(form);
 
 });
 
-function parseForm() {
+function getCollectionValues(collection) {
+	return [].slice.call(collection).map(function(item){ return item.value });
+}
 
-	var urlLimitParam;
-	var urlParameters = [];
-	var form = window.document.getElementById('filterForm');
+function properOrder(arg1, arg2) {
+	return arg1 < arg2;
+}
 
-	for (var i = 0; i < form.elements.length - 1; i++) {
+function areDatesEmptyOrValid(dateStart, dateEnd) {
 
-		var el = form.elements[i];
-		// console.log(el.name, el.name=='limit');
-		var urlParam = {};
-		urlParam[el.name] = [];
-
-		if (el.name == 'limit') {
-			urlLimitParam = el.value;
-		} 
-		else if (typeof el.selectedOptions != 'undefined' && el.selectedOptions.length > 0) {
-			var options = el.selectedOptions;
-			urlParam[el.name] = [];
-			for (var j = 0; j < options.length; j++) {
-				urlParam[el.name].push(options[j].value);
-			}
-		} 
-		else if (el.value) {
-			urlParam[el.name].push(form.elements[i].value);
-		}
-
-		if (urlParam[el.name].length > 0) {
-			urlParameters.push(urlParam);
-		}
-
+	if (dateStart != '') {
+		dateStart = new Date(dateStart);
 	}
 
-	constructUrl(urlParameters, urlLimitParam);
+	if (dateEnd != '') {
+		dateEnd = new Date(dateEnd);
+	}
+
+	if (dateStart != '' && dateStart == 'Invalid Date') {
+		alert("Invalid start date");
+		return false;
+	}
+
+	if (dateEnd != '' && dateEnd == 'Invalid Date') {
+		alert("Invalid end date");
+		return false;
+	}	
+
+	if (dateStart != '' && dateEnd != '') {
+		if (!properOrder(dateStart, dateEnd)) {
+			alert('Start date must be prior to end date')
+			return false;
+		}
+	}
+
+	return true;
+
+}
+
+function valid24TimeFormat(time) {
+	// Regex returns 0 if true and -1 if false. Therefore, Boolean is used
+	// to convert 0 to `return true` and -1 to `retrun false` 
+	return Boolean(!time.search('^(?:[0-1]?[0-9]|2[0-3])(?::[0-5][0-9])$'))
+}
+
+function areTimesEmptyOrValid(timeStart, timeEnd) {
+
+	if (timeStart != '' && !valid24TimeFormat(timeStart)) {
+		alert('Invalid start time');
+		return false;
+	}
+
+	if (timeEnd != '' && !valid24TimeFormat(timeEnd)) {
+		alert('Invalid end time');
+		return false;
+	}
+
+	if (timeStart != '' && timeEnd != '') {
+		if (!properOrder(timeStart, timeEnd)) {
+			alert('Start time must be prior to end time');
+			return false;
+		}
+	}
+
+	return true;
+
+}
+
+function parseForm(form) {
+
+	var elements = form.elements;
+
+	var category = getCollectionValues(elements.category.selectedOptions);
+	var dayofweek= getCollectionValues(elements.dayofweek.selectedOptions);
+	var pddistrict = getCollectionValues(elements.pddistrict.selectedOptions);
+	var resolution = getCollectionValues(elements.resolution.selectedOptions);
+	var dateStart = elements.dateStart.value.trim();
+	var dateEnd = elements.dateEnd.value.trim();
+	var timeStart = elements.timeStart.value.trim();
+	var timeEnd = elements.timeEnd.value.trim();
+	var limit = elements.limit.value.trim();
+
+
+	var urlParameters = {
+		category: category,
+		dayofweek: dayofweek,
+		pddistrict: pddistrict,
+		resolution: resolution,
+		date: [dateStart, dateEnd],
+		time: [timeStart, timeEnd],
+		limit: limit
+	}
+
+	if(areDatesEmptyOrValid(dateStart, dateEnd) && areTimesEmptyOrValid(timeStart, timeEnd)){
+		constructUrl(urlParameters);
+	} else {
+		alert('There was an error while parsing the form.');
+	}
+
 }
 
 function formatUrlDateAndTimeParameters(type, array) {
@@ -151,49 +218,42 @@ function formatUrlStringParameters(type, array) {
 	return type + " IN ('" + array.join("', '") + "')";
 }
 
-function formatUrlParameters(array) {
 
-	var urlTail = '$where='
-	
-	for (var i in array) {
+function stringValueExists(param) {
 
-		var obj = array[i];
-		var urlParam = Object.keys(obj)[0];
-		var urlParamArgs = obj[urlParam];
-		var checkIfDateOrTime = urlParam.slice(0,4);	
-
-		if (checkIfDateOrTime == 'date' || checkIfDateOrTime == 'time') {
-
-			var urlExt = formatUrlDateAndTimeParameters(urlParam, urlParamArgs);
-
-		} else {
-			var urlExt = formatUrlStringParameters(urlParam, urlParamArgs);
-
-		}
-
-		urlTail += urlExt;
-
-		if (i != array.length - 1) {
-			urlTail += ' AND ';
-		}
-
+	if (typeof param != 'undefined' && param.length > 0) {
+		return true;
+	} else {
+		return false;
 	}
 
-	console.log(urlTail);
 }
 
-function constructUrl(urlParameters, limit) {
+function dateOrTimeValueExists(param) {
+	return param.some(function(element){ return element.length > 0})
+}
 
-	if (typeof limit == 'undefined')
-		limit = 100;
+function constructUrl(params) {
 
-	var url = BASE_URL.concat('$limit=', limit, '&');
+	var url = BASE_URL.concat('$limit=', params.limit, '&$where=');
 
-	if (urlParameters.length > 0) {
-		formatUrlParameters(urlParameters);
-	} else {
-		return url;
+	if (stringValueExists(params.category)) {
+		url += formatUrlStringParameters('category', params.category);
+	} else if (stringValueExists(params.dayofweek)) {
+		url += formatUrlStringParameters('dayofweek', params.dayofweek);
+	} else if (stringValueExists(params.pddistrict)) {
+		url += formatUrlStringParameters('pddistrict', params.pddistrict);
+	} else if (stringValueExists(params.resolution)) {
+		url += formatUrlStringParameters('resolution', params.resolution);	
+	} else if (dateOrTimeValueExists(params.date)) {
+		url += formatUrlDateAndTimeParameters('date', params.date);	
+	} else if (dateOrTimeValueExists(params.time)) {
+		url += formatUrlDateAndTimeParameters('time', params.time);	
 	}
+
+
+	console.log(url);
+
 
 }
 
