@@ -119,6 +119,10 @@ function properOrder(arg1, arg2) {
 
 function areDatesEmptyOrValid(dateStart, dateEnd) {
 
+	var invalidDateAlert = function() {
+			alert('Invalid start date. Use correct format YYYY-MM-DD.');
+		}
+
 	if (dateStart != '') {
 		dateStart = new Date(dateStart);
 	}
@@ -128,12 +132,12 @@ function areDatesEmptyOrValid(dateStart, dateEnd) {
 	}
 
 	if (dateStart != '' && dateStart == 'Invalid Date') {
-		alert("Invalid start date");
+		invalidDateAlert();
 		return false;
 	}
 
 	if (dateEnd != '' && dateEnd == 'Invalid Date') {
-		alert("Invalid end date");
+		invalidDateAlert();
 		return false;
 	}	
 
@@ -151,18 +155,22 @@ function areDatesEmptyOrValid(dateStart, dateEnd) {
 function valid24TimeFormat(time) {
 	// Regex returns 0 if true and -1 if false. Therefore, Boolean is used
 	// to convert 0 to `return true` and -1 to `retrun false` 
-	return Boolean(!time.search('^(?:[0-1]?[0-9]|2[0-3])(?::[0-5][0-9])$'))
+	return Boolean(!time.search('^(?:[0-1][0-9]|2[0-3])(?::[0-5][0-9])$'))
 }
 
 function areTimesEmptyOrValid(timeStart, timeEnd) {
 
+	var invalidTimeAlert = function() {
+			alert('Invalid start time. Use 24 hr format HH:MM (ex. 08:00, 19:00)');
+		}
+
 	if (timeStart != '' && !valid24TimeFormat(timeStart)) {
-		alert('Invalid start time');
+		invalidTimeAlert();
 		return false;
 	}
 
 	if (timeEnd != '' && !valid24TimeFormat(timeEnd)) {
-		alert('Invalid end time');
+		invalidTimeAlert();
 		return false;
 	}
 
@@ -213,7 +221,9 @@ function formatUrlDateAndTimeParameters(type, array) {
 	var start = array[0];
 	var end = array[1];
 
-	if (start != '' && end != '') {
+	if (start == '' && end == '') {
+		return false;
+	} else if (start != '' && end != '') {
 		return type + " between '" + start + "' and '" + end + "'";
 	} else if (start != '' && end == '') {
 		return type + " > '" + array[0] + "'";
@@ -224,7 +234,12 @@ function formatUrlDateAndTimeParameters(type, array) {
 }
 
 function formatUrlStringParameters(type, array) {
-	return type + " IN ('" + array.join("', '") + "')";
+	if (array.length > 0 ) {
+		return type + " IN ('" + array.join("', '") + "')";
+	} else {
+		return false;
+	}
+
 }
 
 
@@ -244,24 +259,40 @@ function dateOrTimeValueExists(param) {
 
 function constructUrl(params) {
 
-	var url = BASE_URL.concat('$limit=', params.limit, '&$where=');
+	var limit;
+	var urlExtensions = [];
+	var url = BASE_URL.concat('$limit=');
 
-	if (stringValueExists(params.category)) {
-		url += formatUrlStringParameters('category', params.category);
-	} else if (stringValueExists(params.dayofweek)) {
-		url += formatUrlStringParameters('dayofweek', params.dayofweek);
-	} else if (stringValueExists(params.pddistrict)) {
-		url += formatUrlStringParameters('pddistrict', params.pddistrict);
-	} else if (stringValueExists(params.resolution)) {
-		url += formatUrlStringParameters('resolution', params.resolution);	
-	} else if (dateOrTimeValueExists(params.date)) {
-		url += formatUrlDateAndTimeParameters('date', params.date);	
-	} else if (dateOrTimeValueExists(params.time)) {
-		url += formatUrlDateAndTimeParameters('time', params.time);	
+	for (var param in params) {
+
+		var valuesArray = params[param];
+
+		if (param == 'time' || param == 'date') {
+			var dateOrTimeValue = formatUrlDateAndTimeParameters(param, valuesArray);
+			if (dateOrTimeValue) {
+				urlExtensions.push(dateOrTimeValue);
+			}
+		} else if (param == 'limit') {
+			limit = valuesArray;
+		} else {
+			var stringValue = formatUrlStringParameters(param, valuesArray);
+			if (stringValue) {
+				urlExtensions.push(stringValue);
+			}
+			
+		}
+
 	}
 
+	url = url.concat(limit);
+
+	if (urlExtensions.length > 0) {
+		url += '&$where='.concat(urlExtensions.join(" AND ")) ;
+	}
 
 	console.log(url);
+
+
 
 
 }
