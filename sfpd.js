@@ -48,6 +48,7 @@ function requestData(url, f) {
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
 			var data = JSON.parse(xhttp.responseText);
 			f(data);
+			createMenus(data);
 		}
 	};
 
@@ -290,13 +291,18 @@ function constructUrl(params) {
 		url += '&$where='.concat(urlExtensions.join(" AND ")) ;
 	}
 
-	console.log(url);
-
-
-
+	requestData(url, listData);
 
 }
 
+function listData(array) {
+	var dataList = window.document.getElementById('dataList');
+
+	var lis = array.map(function(el) {return "<li>" + JSON.stringify(getIncidentObj(el)) +"</li>"})
+
+	dataList.innerHTML = lis;
+
+}
 
 requestData(BASE_URL+'$limit=100', createMenus);
 requestData(BASE_URL+'$limit=100', getIncidents);
