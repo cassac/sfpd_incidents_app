@@ -1,5 +1,7 @@
 var BASE_URL = "https://data.sfgov.org/resource/cuks-n6tp.json?"; // this endpoint newer than `tmnf-yvry.json`
 /*
+Referemce: https://dev.socrata.com/foundry/data.sfgov.org/cuks-n6tp
+
 Filter date example: BASE_URL + $where=date between '2014-01-10T12:00:00' and '2015-01-10T14:00:00'
 
 https://data.sfgov.org/resource/cuks-n6tp.json?$where=category IN ('ASSAULT', 'KIDNAPPING') AND dayofweek IN ('Monday', 'Saturday') AND date between '2014-01-10T12:00:00' and '2015-01-10T14:00:00' 
