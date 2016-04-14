@@ -204,14 +204,23 @@ function parseForm(form) {
 
 	if(areDatesEmptyOrValid(dateStart, dateEnd) && areTimesEmptyOrValid(timeStart, timeEnd)){
 		constructUrl(urlParameters);
-	} else {
-		alert('There was an error while parsing the form.');
-	}
+	} 
 
 }
 
 function formatUrlDateAndTimeParameters(type, array) {
-	return type + " between '" + array[0] + "'' and '" + array[1] +"'";
+
+	var start = array[0];
+	var end = array[1];
+
+	if (start != '' && end != '') {
+		return type + " between '" + start + "' and '" + end + "'";
+	} else if (start != '' && end == '') {
+		return type + " > '" + array[0] + "'";
+	} else {
+		return type + " < '" + array[0] + "'";
+	}
+
 }
 
 function formatUrlStringParameters(type, array) {
