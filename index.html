@@ -4,13 +4,15 @@
   <meta charset="UTF-8" />
   <title>SFPD Incidents Javascript App</title>
   <style>
+    select {
+      width: 100%;
+    }
     div { 
         float:left; 
-        margin:0; 
-        min-width: 300px;
+        margin: 10px 0px 0px 10px; 
     }
     #filtersColumn {
-        width:25%; 
+        width:20%; 
     }
     #dataColumn {
         width:65%; 
@@ -18,10 +20,25 @@
     td {
       background-color: red;
     }
-    table {
-      width:250px;
+    table, th, td {
+        border-collapse: collapse;
     }
-
+    th, td {
+        padding: 1px;
+        text-align: left;
+    }
+    td {
+      border: 1px solid black;
+    }
+    #footer {
+      position: fixed; 
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      padding: 10px;
+      background-color: #FFF;
+    }
   </style>
 </head>
 <body>
@@ -90,6 +107,9 @@
       <tbody id='dataTableBody'>
       </tbody>
     </table>
+  </div>
+  <div id='footer'>
+    <p>Use the filters to make a query.</p>
   </div>
   <script src="sfpd.js"></script>
 
