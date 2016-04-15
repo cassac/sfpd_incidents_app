@@ -212,6 +212,8 @@ filterFormSubmitBtn.addEventListener('click', function(e) {
 
 	parseForm(form);
 
+
+
 });
 
 
@@ -320,6 +322,7 @@ function areTimesEmptyOrValid(timeStart, timeEnd) {
 function parseForm(form) {
 
 	var elements = form.elements;
+	var outputtype = form.outputType.value;
 	var category = getCollectionValues(elements.category.selectedOptions);
 	var dayofweek= getCollectionValues(elements.dayofweek.selectedOptions);
 	var pddistrict = getCollectionValues(elements.pddistrict.selectedOptions);
@@ -343,7 +346,7 @@ function parseForm(form) {
 
 	if (areDatesEmptyOrValid(dateStart, dateEnd) && areTimesEmptyOrValid(timeStart, timeEnd)) {
 	
-		constructUrl(urlParameters);
+		constructUrl(urlParameters, outputtype);
 	
 	} 
 
@@ -409,7 +412,7 @@ function dateOrTimeValueExists(param) {
 
 }
 
-function constructUrl(params) {
+function constructUrl(params, outputtype) {
 
 	var limit;
 	var urlExtensions = [];
@@ -455,23 +458,21 @@ function constructUrl(params) {
 
 	}
 
-	// url += '&$order=incidntnum DESC';
+	if (outputtype == 'chart') {
 
-	// requestData(url, listData);
-	requestData(url, initiateStats);
+		requestData(url, initiateStats);
+
+	} else {
+
+		requestData(url, listData);
+
+	}
+
+
 	console.log(url);
 
 }
 
-function listData(array) {
-
-	var dataList = window.document.getElementById('dataTableBody');
-
-	var trs = array.map(function(el) { return getIncidentObj(el).getTableRow });
-
-	dataTableBody.innerHTML = trs.join('');
-
-}
 
 function populateArray(length) {
 	var array = [];
@@ -496,7 +497,7 @@ function normalizeStats(array) {
 
 }
 
-function getTDs(amount) {
+function createTableData(amount) {
 	var tds = '';
 	for (var i = 0; i < amount; i++) {
 		tds += '<td></td>';
@@ -504,20 +505,33 @@ function getTDs(amount) {
 	return tds;
 }
 
-function displayStats(array, title) {
+function createTable(array, title, f) {
 
-	var tableStart = "<div class='statsTable'><table><theader>" + title + "</theader><tbody>";
+	var tableStart = "<div><table><theader>" + title + "</theader><tbody>";
 	var tableEnd = "</tbody></table></div>";
 
 	var tableBody = '';
 
 	for (var el in array) {
 
-		tableBody += '<tr><th>' + el + '</th>' + getTDs(array[el]) + '</tr>';
+		tableBody += '<tr><th>' + el + '</th>' + f(array[el]) + '</tr>';
 
 	}
 
 	return tableStart + tableBody + tableEnd;
+
+}
+
+function listData(array) {
+
+	var tableStart = "<div><table><theader>Tabular Data</theader><tbody>";
+	var tableEnd = "</tbody></table></div>";	
+
+	var dataColumn = window.document.getElementById('dataColumn');
+
+	var trs = array.map(function(el) { return getIncidentObj(el).getTableRow });
+
+	dataColumn.innerHTML = tableStart + trs.join('') + tableEnd;
 
 }
 
@@ -540,11 +554,11 @@ function initiateStats(array) {
 		
 	}
 
-	var monthlyNormalized = displayStats(normalizeStats(monthly), 'Monthly');
-	var dailyNormalized = displayStats(normalizeStats(daily), 'Daily');
-	var hourlyNormalized = displayStats(normalizeStats(hourly), 'Hourly');
+	var monthlyNormalized = createTable(normalizeStats(monthly), 'Monthly', createTableData);
+	var dailyNormalized = createTable(normalizeStats(daily), 'Daily', createTableData);
+	var hourlyNormalized = createTable(normalizeStats(hourly), 'Hourly', createTableData);
 
-	window.document.getElementById('dataStats').innerHTML = hourlyNormalized +
+	window.document.getElementById('dataColumn').innerHTML = hourlyNormalized +
 		dailyNormalized + monthlyNormalized;
 
 }
