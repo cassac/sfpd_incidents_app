@@ -254,7 +254,7 @@ function areDatesEmptyOrValid(dateStart, dateEnd) {
 
 }
 
-function valid24TimeFormat(time) {
+function valid24HrTimeFormat(time) {
 
 	return time.search('^(?:[0-1][0-9]|2[0-3])(?::[0-5][0-9])$') > -1;
 
@@ -268,7 +268,7 @@ function areTimesEmptyOrValid(timeStart, timeEnd) {
 		
 		}
 
-	if (timeStart != '' && !valid24TimeFormat(timeStart)) {
+	if (timeStart != '' && !valid24HrTimeFormat(timeStart)) {
 		
 		invalidTimeAlert();
 		
@@ -276,7 +276,7 @@ function areTimesEmptyOrValid(timeStart, timeEnd) {
 
 	}
 
-	if (timeEnd != '' && !valid24TimeFormat(timeEnd)) {
+	if (timeEnd != '' && !valid24HrTimeFormat(timeEnd)) {
 		
 		invalidTimeAlert();
 
@@ -437,7 +437,11 @@ function constructUrl(params) {
 
 	}
 
-	requestData(url, listData);
+	// url += '&$order=incidntnum DESC';
+
+	// requestData(url, listData);
+	requestData(url, initiateStats);
+	console.log(url);
 
 }
 
@@ -451,5 +455,82 @@ function listData(array) {
 
 }
 
-requestData(BASE_URL+'$limit=100', createMenus);
-requestData(BASE_URL+'$limit=100', getIncidents);
+function populateArray(length) {
+	var array = [];
+	for (var i = 0; i < length; i++) {
+		array.push(0);
+	}
+	return array;
+}
+
+var daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
+	'Friday', 'Saturday', 'Sunday']
+
+function normalizeStats(array) {
+
+	var sum = array.reduce(function(p, c){ return p + c; });
+
+	for (var el in array) {
+		array[el] = Math.round(((array[el] / sum) * 100));
+	}
+
+	return array;
+
+}
+
+function getTDs(amount) {
+	var tds = '';
+	for (var i = 0; i < amount; i++) {
+		tds += '<td></td>';
+	}
+	return tds;
+}
+
+function displayStats(array, title) {
+
+	var tableStart = "<div class='statsTable'><table><theader>" + title + "</theader><tbody>";
+	var tableEnd = "</tbody></table></div>";
+
+	var tableBody = '';
+
+	for (var el in array) {
+
+		tableBody += '<tr><th>' + el + '</th>' + getTDs(array[el]) + '</tr>';
+
+	}
+
+	return tableStart + tableBody + tableEnd;
+
+}
+
+function initiateStats(array) {
+
+	var monthly = populateArray(12);
+	var daily = populateArray(7);
+	var hourly = populateArray(24);
+
+	for (var el in array) {
+
+		var incident = array[el];
+		var month = parseInt(incident.date.split('-')[1]) - 1;
+		var day = daysOfWeek.indexOf(incident.dayofweek);
+		var hour = parseInt(incident.time.split(':')[0]);
+
+		monthly[month] += 1;
+		daily[day] += 1;
+		hourly[hour] += 1;
+		
+	}
+
+	var monthlyNormalized = displayStats(normalizeStats(monthly), 'Monthly');
+	var dailyNormalized = displayStats(normalizeStats(daily), 'Daily');
+	var hourlyNormalized = displayStats(normalizeStats(hourly), 'Hourly');
+
+	window.document.getElementById('dataStats').innerHTML = hourlyNormalized +
+		dailyNormalized + monthlyNormalized;
+
+}
+
+
+// requestData(BASE_URL+'$limit=100', createMenus);
+// requestData(BASE_URL+'$limit=100', getIncidents);
