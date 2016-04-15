@@ -11,17 +11,17 @@ function Incident(address, category, date, dayofweek, descript,
 					incidntnum, location, pddistrict, pdid,
 					resolution, time, x, y) {
 
+	this.incidntnum = incidntnum;
+	this.date = date;
+	this.time = time;
 	this.address = address;
 	this.category = category;
-	this.date = date;
 	this.dayofweek = dayofweek;
 	this.descript = descript;
-	this.incidntnum = incidntnum;
 	this.location = location;
 	this.pddistrict = pddistrict;
 	this.pdid = pdid;
 	this.resolution = resolution;
-	this.time = time;
 	this.x = x;
 	this.y = y;
 
@@ -32,14 +32,46 @@ function Incident(address, category, date, dayofweek, descript,
 		}
 	});
 
-	Object.defineProperty(this, 'toTd', {
+	Object.defineProperty(this, 'getTableRow', {
+
 		get: function() {
-			tds = '';
-			for (var item in this) {
-				tds += "<td>" + this[item] + "</td>";
+
+			var targetItems = ['category', 'incidntnum', 'pddistrict', 'time'];
+
+			function isTargetItem(item) {
+
+				return targetItems.indexOf(item) > -1;
+			
 			}
-			return tds;
+
+			var tableData = '<tr>';
+			
+			for (var item in this) {
+
+				var value;
+	
+				if (item == 'date') {
+
+					value = this.getDateString;
+
+				} else if (isTargetItem(item)) {
+
+					value = this[item];
+				
+				} else {
+
+					continue;
+				
+				}
+	
+				tableData += "<td>" + value.substr(0, 18) + "</td>";
+	
+			}
+
+			return tableData + '</tr>';
+
 		}
+
 	});
 
 	Object.defineProperty(this, 'report', {
@@ -175,7 +207,7 @@ function areDatesEmptyOrValid(dateStart, dateEnd) {
 function valid24TimeFormat(time) {
 	// Regex returns 0 if true and -1 if false. Therefore, Boolean is used
 	// to convert 0 to `return true` and -1 to `retrun false` 
-	return Boolean(!time.search('^(?:[0-1][0-9]|2[0-3])(?::[0-5][0-9])$'))
+	return Boolean(!time.search('^(?:[0-1][0-9]|2[0-3])(?::[0-5][0-9])$'));
 }
 
 function areTimesEmptyOrValid(timeStart, timeEnd) {
@@ -315,13 +347,12 @@ function constructUrl(params) {
 }
 
 function listData(array) {
-	var dataList = window.document.getElementById('dataList');
 
-	console.log(  getIncidentObj(array[0]).toTd  )
+	var dataList = window.document.getElementById('dataTableBody');
 
-	// var lis = array.map(function(el) {return "<li>" + getIncidentObj(el) +"</li>"})
+	var trs = array.map(function(el) { return getIncidentObj(el).getTableRow })
 
-	// dataList.innerHTML = lis;
+	dataTableBody.innerHTML = trs;
 
 }
 
