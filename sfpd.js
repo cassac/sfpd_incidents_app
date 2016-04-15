@@ -358,8 +358,8 @@ function formatUrlDateAndTimeParameters(type, array) {
 
 function formatUrlStringParameters(type, array) {
 
-	if (array.length > 0 ) {
-	
+	if (array.length > 0 && array[0] != '') {
+
 		return type + " IN ('" + array.join("', '") + "')";
 	
 	} else {
