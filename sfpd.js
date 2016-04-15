@@ -25,11 +25,30 @@ function Incident(address, category, date, dayofweek, descript,
 	this.x = x;
 	this.y = y;
 
-}
 
-Incident.prototype.report = function(incident) {
-	console.log('On', this.date, this.dayofweek, 'at', this.time,'a\nin the',
-		this.pddistrict, 'there was a(n)', this.category,'incident.')
+	Object.defineProperty(this, 'getDateString', {
+		get: function() {
+			return new Date(this.date).toDateString();
+		}
+	});
+
+	Object.defineProperty(this, 'toTd', {
+		get: function() {
+			tds = '';
+			for (var item in this) {
+				tds += "<td>" + this[item] + "</td>";
+			}
+			return tds;
+		}
+	});
+
+	Object.defineProperty(this, 'report', {
+		get: function() {
+			return 'On ' + this.getDateString + ' at ' + this.time +' in the ' +
+				this.pddistrict + ' there was a(n) "' + this.category + '" incident.';
+		}
+	});
+
 }
 
 function getIncidentObj(incident) {
@@ -298,9 +317,11 @@ function constructUrl(params) {
 function listData(array) {
 	var dataList = window.document.getElementById('dataList');
 
-	var lis = array.map(function(el) {return "<li>" + JSON.stringify(getIncidentObj(el)) +"</li>"})
+	console.log(  getIncidentObj(array[0]).toTd  )
 
-	dataList.innerHTML = lis;
+	// var lis = array.map(function(el) {return "<li>" + getIncidentObj(el) +"</li>"})
+
+	// dataList.innerHTML = lis;
 
 }
 
