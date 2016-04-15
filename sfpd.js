@@ -64,7 +64,7 @@ function Incident(address, category, date, dayofweek, descript,
 				
 				}
 	
-				tableData += "<td>" + value.substr(0, 18) + "</td>";
+				tableData += "<td>" + value.split(',')[0] + "</td>";
 	
 			}
 
@@ -350,9 +350,9 @@ function listData(array) {
 
 	var dataList = window.document.getElementById('dataTableBody');
 
-	var trs = array.map(function(el) { return getIncidentObj(el).getTableRow })
+	var trs = array.map(function(el) { return getIncidentObj(el).getTableRow });
 
-	dataTableBody.innerHTML = trs;
+	dataTableBody.innerHTML = trs.join('');
 
 }
 
