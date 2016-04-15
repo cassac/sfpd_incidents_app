@@ -98,7 +98,7 @@ function getIncidentObj(incident) {
 }
 
 function requestData(url, f) {
-	
+
 	var xhttp = new XMLHttpRequest();
 	
 	xhttp.onreadystatechange = function() {
@@ -109,6 +109,9 @@ function requestData(url, f) {
 
 			f(data);
 			createMenus(data);
+
+			document.getElementById('loading').style.display='none';
+
 
 		}
 
@@ -206,7 +209,9 @@ var filterFormSubmitBtn = window.document.getElementById('filterSubmit');
 
 filterFormSubmitBtn.addEventListener('click', function(e) { 
 
-	var form = window.document.getElementById('filterForm');
+	document.getElementById('loading').style.display='block';
+
+	var form = document.getElementById('filterForm');
 
 	e.preventDefault();
 
