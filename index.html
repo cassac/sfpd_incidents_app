@@ -74,6 +74,11 @@
       <input id='timeStart' name='timeStart' type='text' size='4' placeholder='08:00'>
       <input id='timeEnd' name='timeEnd' type='text' size='4' placeholder='19:00'>
       <br>
+      Output Type:</br>
+      <input type="radio" name="outputType" value="chart" checked> Stats Charts
+      <br>
+      <input type="radio" name="outputType" value="tabular"> Tabular Data
+      <br>
       Output Limit:
       <br>
       <select id='limit' name='limit'>
@@ -91,22 +96,6 @@
     </form>
   </div>
   <div id='dataColumn'>
-    <div id='dataStats'>
-      
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Incident ID</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Category</th>
-          <th>District</th>
-        </tr>
-      </thead>
-      <tbody id='dataTableBody'>
-      </tbody>
-    </table>
   </div>
   <div id='footer'>
     <p>Use the filters to make a query.</p>
