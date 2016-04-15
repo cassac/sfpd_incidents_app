@@ -255,9 +255,8 @@ function areDatesEmptyOrValid(dateStart, dateEnd) {
 }
 
 function valid24TimeFormat(time) {
-	// Regex returns 0 if true and -1 if false. Therefore, Boolean is used
-	// to convert 0 to `return true` and -1 to `retrun false` 
-	return Boolean(!time.search('^(?:[0-1][0-9]|2[0-3])(?::[0-5][0-9])$'));
+
+	return time.search('^(?:[0-1][0-9]|2[0-3])(?::[0-5][0-9])$') > -1;
 
 }
 
