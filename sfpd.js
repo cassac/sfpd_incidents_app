@@ -1,3 +1,5 @@
+(function(){
+
 var BASE_URL = "https://data.sfgov.org/resource/cuks-n6tp.json?"; // this endpoint newer than `tmnf-yvry.json`
 /*
 Referemce: https://dev.socrata.com/foundry/data.sfgov.org/cuks-n6tp
@@ -105,12 +107,13 @@ function requestData(url, f) {
 
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
 
+			document.getElementById('loading').style.display='none';
+
 			var data = JSON.parse(xhttp.responseText);
 
 			f(data);
 			createMenus(data);
 
-			document.getElementById('loading').style.display='none';
 
 
 		}
@@ -474,7 +477,7 @@ function constructUrl(params, outputtype) {
 	}
 
 
-	console.log(url);
+	// console.log(url);
 
 }
 
@@ -512,7 +515,7 @@ function createTableData(amount) {
 
 function createTable(array, title, f) {
 
-	var tableStart = "<div><table><theader>" + title + "</theader><tbody>";
+	var tableStart = "<div><table class='graphTable'><theader>" + title + "</theader><tbody>";
 	var tableEnd = "</tbody></table></div>";
 
 	var tableBody = '';
@@ -569,5 +572,7 @@ function initiateStats(array) {
 }
 
 
-// requestData(BASE_URL+'$limit=100', createMenus);
-// requestData(BASE_URL+'$limit=100', getIncidents);
+document.getElementById('loading').style.display='block';
+requestData(BASE_URL+'$limit=2000', createMenus);
+
+})();
