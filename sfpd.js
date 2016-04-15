@@ -120,6 +120,12 @@ function requestData(url, f) {
 
 };
 
+function getCollectionValues(collection) {
+
+	return [].slice.call(collection).map(function(item){ return item.value });
+
+}
+
 function generateHtmlMenuOption(item) {
 
 	return '<option value="' + item + '">' + item + '</option>';
@@ -127,11 +133,28 @@ function generateHtmlMenuOption(item) {
 }
 
 function populateMenus(array, menuType) {
-	
-	var options = array.map(function(item) { return generateHtmlMenuOption(item); });
+
+	var options = '';
 	var filters = window.document.getElementById(menuType);
+	var existingFilters = getCollectionValues(filters);
+
+	for (var item in array) {
+
+		if (existingFilters.indexOf(array[item]) == -1) {
+		
+			options += generateHtmlMenuOption(array[item]);
+		
+		}
 	
-	filters.innerHTML += options;
+	}
+
+	if (options.length>0) {
+
+		filters.innerHTML += options;
+
+	}
+
+
 }
 
 function createMenus(array) {
@@ -191,11 +214,6 @@ filterFormSubmitBtn.addEventListener('click', function(e) {
 
 });
 
-function getCollectionValues(collection) {
-
-	return [].slice.call(collection).map(function(item){ return item.value });
-
-}
 
 function properOrder(arg1, arg2) {
 
