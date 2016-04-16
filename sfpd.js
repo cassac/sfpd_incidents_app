@@ -32,48 +32,6 @@ function Incident(address, category, date, dayofweek, descript,
 		}
 	});
 
-	Object.defineProperty(this, 'getTableData', {
-
-		get: function() {
-
-			var targetItems = ['category', 'incidntnum', 'pddistrict', 'time'];
-
-			function isTargetItem(item) {
-
-				return targetItems.indexOf(item) > -1;
-			
-			}
-
-			var tableData = '';
-			
-			for (var item in this) {
-
-				var value;
-	
-				if (item == 'date') {
-
-					value = this.getDateString;
-
-				} else if (isTargetItem(item)) {
-
-					value = this[item];
-				
-				} else {
-
-					continue;
-				
-				}
-	
-				tableData += "<td>" + value.split(',')[0] + "</td>";
-	
-			}
-
-			return tableData;
-
-		}
-
-	});
-
 	Object.defineProperty(this, 'report', {
 		get: function() {
 			return 'On ' + this.getDateString + ' at ' + this.time +' in the ' +
@@ -544,7 +502,7 @@ function normalizeStats(array) {
 
 }
 
-function createTableData(amount) {
+function distributionTableData(amount) {
 	var tds = '';
 	for (var i = 0; i < amount; i++) {
 		tds += '<td></td>';
@@ -569,14 +527,47 @@ function createTable(array, title, f) {
 
 }
 
-function returnTableData(obj) {
+function tabularTableData(obj) {
 
-	return getIncidentObj(obj).getTableData;
+	var targetProp = ['category', 'incidntnum', 'pddistrict', 'time'];
+
+	function isTargetProp(item) {
+
+		return targetProp.indexOf(item) > -1;
+	
+	}
+
+	var tableData = '';
+	
+	for (var prop in obj) {
+
+		var value;
+
+		if (prop == 'date') {
+
+			value = new Date(obj.date).toDateString();
+
+		} else if (isTargetProp(prop)) {
+
+			value = obj[prop];
+		
+		} else {
+
+			continue;
+		
+		}
+
+		tableData += "<td>" + value.split(',')[0] + "</td>";
+
+	}
+
+	return tableData;
+
 
 }
 
 function listReturnedAmount(amount) {
-	
+
 	var span = window.document.getElementById('amountSpan');
 	span.innerHTML = 'Returned ' + amount + ' incidents using the filters below:';
 
@@ -586,7 +577,7 @@ function listData(array) {
 
 	var dataColumn = window.document.getElementById('dataColumn');
 
-	var table = createTable(array, 'Tabular Data', returnTableData);
+	var table = createTable(array, 'Tabular Data', tabularTableData);
 
 	dataColumn.innerHTML += table;
 
@@ -614,9 +605,9 @@ function initiateStats(array) {
 		
 	}
 
-	var monthlyNormalized = createTable(normalizeStats(monthly), 'Monthly', createTableData);
-	var dailyNormalized = createTable(normalizeStats(daily), 'Daily', createTableData);
-	var hourlyNormalized = createTable(normalizeStats(hourly), 'Hourly', createTableData);
+	var monthlyNormalized = createTable(normalizeStats(monthly), 'Monthly', distributionTableData);
+	var dailyNormalized = createTable(normalizeStats(daily), 'Daily', distributionTableData);
+	var hourlyNormalized = createTable(normalizeStats(hourly), 'Hourly', distributionTableData);
 
 	window.document.getElementById('dataColumn').innerHTML += hourlyNormalized +
 		dailyNormalized + monthlyNormalized;
