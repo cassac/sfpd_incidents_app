@@ -2,7 +2,7 @@
 
 var BASE_URL = "https://data.sfgov.org/resource/cuks-n6tp.json?";
 /*
-Referemce: https://dev.socrata.com/foundry/data.sfgov.org/cuks-n6tp
+Reference: https://dev.socrata.com/foundry/data.sfgov.org/cuks-n6tp
 New endpoint: `cuks-n6tp.json`
 Old endpoint: `tmnf-yvry.json`
 */
@@ -354,7 +354,11 @@ function parseForm(form) {
 	
 		constructUrl(urlParameters, outputtype);
 	
-	} 
+	} else {
+
+		document.getElementById('loading').style.display='none';
+	
+	}
 
 }
 
