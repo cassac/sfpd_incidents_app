@@ -529,7 +529,7 @@ function createTable(array, title, f) {
 
 function tabularTableData(obj) {
 
-	var targetProp = ['category', 'incidntnum', 'pddistrict', 'time'];
+	var targetProp = ['category', 'pddistrict', 'time'];
 
 	function isTargetProp(item) {
 
@@ -546,6 +546,11 @@ function tabularTableData(obj) {
 		if (prop == 'date') {
 
 			value = new Date(obj.date).toDateString();
+
+		} else if (prop == 'incidntnum') {
+
+			// attach functio to this property in each <td>
+			value = obj[prop];
 
 		} else if (isTargetProp(prop)) {
 
