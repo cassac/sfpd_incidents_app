@@ -422,18 +422,35 @@ function dateOrTimeValueExists(param) {
 
 }
 
-function createQueryDiv(url) {
+function createLi(ul, item) {
+
+	var li = document.createElement('li');
+	li.appendChild(document.createTextNode(item));
+	ul.appendChild(li);
+
+
+}
+
+function createQueryDiv(array) {
 
 	var div = document.createElement('div');
 	var h3 = document.createElement('h3');
-	var p = document.createElement('p');
+	var ul = document.createElement('ul');
+	
+	if (array.length > 0) {
+
+		array.forEach(function(el) {
+			createLi(ul, el);
+		});
+
+	} else {
+		createLi(ul, 'All');
+	}
 
 	h3.innerHTML = 'Current Query:'
-	p.innerHTML = url;
-
 	div.appendChild(h3);
-	div.appendChild(p);
-
+	div.appendChild(ul);
+	
 	return div.innerHTML;
 
 }
@@ -485,7 +502,8 @@ function constructUrl(params, outputtype) {
 	}
 
 
-	window.document.getElementById('dataColumn').innerHTML = createQueryDiv(url);
+	window.document.getElementById('dataColumn').innerHTML = createQueryDiv(urlExtensions);
+
 
 	if (outputtype == 'graph') {
 
