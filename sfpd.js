@@ -422,6 +422,22 @@ function dateOrTimeValueExists(param) {
 
 }
 
+function createQueryDiv(url) {
+
+	var div = document.createElement('div');
+	var h3 = document.createElement('h3');
+	var p = document.createElement('p');
+
+	h3.innerHTML = 'Current Query:'
+	p.innerHTML = url;
+
+	div.appendChild(h3);
+	div.appendChild(p);
+
+	return div.innerHTML;
+
+}
+
 function constructUrl(params, outputtype) {
 
 	var limit;
@@ -468,6 +484,9 @@ function constructUrl(params, outputtype) {
 
 	}
 
+
+	window.document.getElementById('dataColumn').innerHTML = createQueryDiv(url);
+
 	if (outputtype == 'graph') {
 
 		requestData(url, initiateStats);
@@ -478,8 +497,6 @@ function constructUrl(params, outputtype) {
 
 	}
 
-
-	// console.log(url);
 
 }
 
@@ -528,7 +545,6 @@ function createTable(array, title, f) {
 
 	}
 
-	console.log(tableStart + tableBody + tableEnd);
 	return tableStart + tableBody + tableEnd;
 
 }
@@ -545,7 +561,7 @@ function listData(array) {
 
 	var table = createTable(array, 'Tabular Data', returnTableData);
 
-	dataColumn.innerHTML = table;
+	dataColumn.innerHTML += table;
 
 }
 
@@ -572,7 +588,7 @@ function initiateStats(array) {
 	var dailyNormalized = createTable(normalizeStats(daily), 'Daily', createTableData);
 	var hourlyNormalized = createTable(normalizeStats(hourly), 'Hourly', createTableData);
 
-	window.document.getElementById('dataColumn').innerHTML = hourlyNormalized +
+	window.document.getElementById('dataColumn').innerHTML += hourlyNormalized +
 		dailyNormalized + monthlyNormalized;
 
 }
