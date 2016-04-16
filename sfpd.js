@@ -112,8 +112,6 @@ function requestData(url, f) {
 			f(data);
 			createMenus(data);
 
-
-
 		}
 
 	};
@@ -427,7 +425,7 @@ function createLi(ul, item) {
 	var li = document.createElement('li');
 	li.appendChild(document.createTextNode(item));
 	ul.appendChild(li);
-
+	return ul;
 
 }
 
@@ -436,8 +434,10 @@ function createQueryDiv(array, limit) {
 	var div = document.createElement('div');
 	var h3 = document.createElement('h3');
 	var ul = document.createElement('ul');
+	var span = document.createElement('span');
 
-	ul.setAttribute('class', 'queryUl')
+	ul.setAttribute('class', 'queryUl');
+	span.setAttribute('id', 'amountSpan');
 
 	createLi(ul, 'Limit: ' + limit);
 
@@ -449,8 +449,9 @@ function createQueryDiv(array, limit) {
 
 	}
 
-	h3.innerHTML = 'Current Query:'
+	h3.innerHTML = 'Current Query';
 	div.appendChild(h3);
+	div.appendChild(span);
 	div.appendChild(ul);
 	
 	return div.innerHTML;
@@ -505,7 +506,6 @@ function constructUrl(params, outputtype) {
 
 
 	window.document.getElementById('dataColumn').innerHTML = createQueryDiv(urlExtensions, limit);
-
 
 	if (outputtype == 'graph') {
 
@@ -575,6 +575,12 @@ function returnTableData(obj) {
 
 }
 
+function listReturnedAmount(amount) {
+	var span = window.document.getElementById('amountSpan');
+	span.innerHTML = 'Returned ' + amount + ' incidents using below filters:';
+
+}
+
 function listData(array) {
 
 	var dataColumn = window.document.getElementById('dataColumn');
@@ -583,9 +589,12 @@ function listData(array) {
 
 	dataColumn.innerHTML += table;
 
+	listReturnedAmount(array.length);
 }
 
 function initiateStats(array) {
+	
+	console.log(array.length);
 
 	var monthly = populateArray(12);
 	var daily = populateArray(7);
@@ -610,6 +619,8 @@ function initiateStats(array) {
 
 	window.document.getElementById('dataColumn').innerHTML += hourlyNormalized +
 		dailyNormalized + monthlyNormalized;
+
+	listReturnedAmount(array.length);
 
 }
 
