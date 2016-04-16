@@ -64,7 +64,8 @@
       border-radius: 5px;
     }
     input {
-      margin: 4px;
+      margin: 4px 0px 6px 0px;
+      text-align: center;
     }
     #intro ul {
       text-align: left;
@@ -95,7 +96,19 @@
       position: block;
       margin-top: 250px;
       z-index: 100;
-    }    
+    } 
+    input[type=submit] {
+        padding:5px 15px; 
+        background: #CCC; 
+        border: none;
+        cursor:pointer;
+        -webkit-border-radius: 5px;
+        border-radius: 5px; 
+    }
+    select {
+      margin: 4px 0px 6px 0px;
+      text-indent: 25px;
+    }
   </style>
 </head>
 <body>
@@ -150,14 +163,14 @@
   <div id='dataColumn'>
     <div id='intro'>
       <h2>Welcome</h2>
-      <p>This application queries <a href='https://data.sfgov.org/'>SF's Open Data API</a> for local incident reports from the police department.</p>
+      <p>This application queries <a href='https://data.sfgov.org/'>SF's Open Data API</a> for local incident reports from the police department. View distribution of hourly, daily, and monthly distribution of incidents and individual reports in tabular data format.</p>
       <h2>Instructions</h2>
       <ul>
         <li>Results use zero-based indexing. Day 0 is Monday and month 3 is April. Time is 24 hour based. Hour 14 is 2:00pm.</li>
         <li>Use the form on the left to filter data. No selections will return results from every category/date/time.</li>
         <li>Providing both dates/times will perform a "between" query while providing one (beginning or ending) will perform a "less than" or "greater than" query.</li>
-        <li>Selecting output type "tabular data" with a limit over 5000 results may cause your browser to temporarily freeze.</li>
-        <li>The month view for the "distribution graph" is inaccurate for broad searches because results will only be displayed for most recent months.</li>
+        <li>Selecting output type "tabular data" with a limit over 1000 results may temporarily freeze your browser.</li>
+        <li>The month view for the "distribution graph" is inaccurate for broad searches because too many incidents are returned from the most recent months.</li>
       </ul>
     </div>
   </div>
