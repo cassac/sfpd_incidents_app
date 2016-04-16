@@ -34,7 +34,7 @@ function Incident(address, category, date, dayofweek, descript,
 		}
 	});
 
-	Object.defineProperty(this, 'getTableRow', {
+	Object.defineProperty(this, 'getTableData', {
 
 		get: function() {
 
@@ -46,7 +46,7 @@ function Incident(address, category, date, dayofweek, descript,
 			
 			}
 
-			var tableData = '<tr>';
+			var tableData = '';
 			
 			for (var item in this) {
 
@@ -70,7 +70,7 @@ function Incident(address, category, date, dayofweek, descript,
 	
 			}
 
-			return tableData + '</tr>';
+			return tableData;
 
 		}
 
@@ -515,10 +515,10 @@ function createTableData(amount) {
 
 function createTable(array, title, f) {
 
-	var tableStart = "<div><table class='graphTable'><theader>" + title + "</theader><tbody>";
-	var tableEnd = "</tbody></table></div>";
-
 	var tableBody = '';
+	var tableStart = "<div><table class='" + title.split(' ').join('') +
+					 "'><thead><tr><th>" + title + "</th></tr></thead><tbody>";
+	var tableEnd = "</tbody></table></div>";
 
 	for (var el in array) {
 
@@ -526,20 +526,23 @@ function createTable(array, title, f) {
 
 	}
 
+	console.log(tableStart + tableBody + tableEnd);
 	return tableStart + tableBody + tableEnd;
 
 }
 
-function listData(array) {
+function returnStuff(obj) {
+	console.log(getIncidentObj(obj).getTableData)
+	return getIncidentObj(obj).getTableData;
+}
 
-	var tableStart = "<div><table><theader>Tabular Data</theader><tbody>";
-	var tableEnd = "</tbody></table></div>";	
+function listData(array) {
 
 	var dataColumn = window.document.getElementById('dataColumn');
 
-	var trs = array.map(function(el) { return getIncidentObj(el).getTableRow });
+	var table = createTable(array, 'Tabular Data', returnStuff);
 
-	dataColumn.innerHTML = tableStart + trs.join('') + tableEnd;
+	dataColumn.innerHTML = table;
 
 }
 
