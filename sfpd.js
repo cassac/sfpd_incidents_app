@@ -576,8 +576,9 @@ function returnTableData(obj) {
 }
 
 function listReturnedAmount(amount) {
+	
 	var span = window.document.getElementById('amountSpan');
-	span.innerHTML = 'Returned ' + amount + ' incidents using below filters:';
+	span.innerHTML = 'Returned ' + amount + ' incidents using the filters below:';
 
 }
 
