@@ -431,20 +431,22 @@ function createLi(ul, item) {
 
 }
 
-function createQueryDiv(array) {
+function createQueryDiv(array, limit) {
 
 	var div = document.createElement('div');
 	var h3 = document.createElement('h3');
 	var ul = document.createElement('ul');
-	
+
+	ul.setAttribute('class', 'queryUl')
+
+	createLi(ul, 'Limit: ' + limit);
+
 	if (array.length > 0) {
 
 		array.forEach(function(el) {
 			createLi(ul, el);
 		});
 
-	} else {
-		createLi(ul, 'All');
 	}
 
 	h3.innerHTML = 'Current Query:'
@@ -502,7 +504,7 @@ function constructUrl(params, outputtype) {
 	}
 
 
-	window.document.getElementById('dataColumn').innerHTML = createQueryDiv(urlExtensions);
+	window.document.getElementById('dataColumn').innerHTML = createQueryDiv(urlExtensions, limit);
 
 
 	if (outputtype == 'graph') {
