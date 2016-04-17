@@ -512,18 +512,41 @@ function distributionTableData(amount) {
 
 function createTable(array, title, f) {
 
-	var tableBody = '';
-	var tableStart = "<div><table class='" + title.split(' ').join('') +
-					 "'><thead><tr><th>" + title + "</th></tr></thead><tbody>";
-	var tableEnd = "</tbody></table></div>";
+	var table = document.createElement('table');
+	var tbody = document.createElement('tbody');
+	var thead = document.createElement('thead');
+	var th = document.createElement('th');
+
+	table.setAttribute('class', title.split(' ').join(''));
+	th.innerHTML = title;
+	thead.appendChild(th);
 
 	for (var el in array) {
 
-		tableBody += '<tr><th>' + el + '</th>' + f(array[el]) + '</tr>';
+		var tr = document.createElement('tr');
+		var th = document.createElement('th');
+		var td = document.createElement('td');
+
+		th.innerHTML = el;
+		tr.appendChild(th);
+
+		tdArray = f(array[el]);
+		 console.log(tdArray);
+		tdArray.forEach(function(td) {
+
+			tr.appendChild(td)
+
+		});
+
+		tbody.appendChild(tr);
+
 
 	}
 
-	return tableStart + tableBody + tableEnd;
+	table.appendChild(tbody);
+
+	return table;
+
 
 }
 
@@ -537,7 +560,7 @@ function tabularTableData(obj) {
 	
 	}
 
-	var tableData = '';
+	var tableData = [];
 	
 	for (var prop in obj) {
 
@@ -549,7 +572,6 @@ function tabularTableData(obj) {
 
 		} else if (prop == 'incidntnum') {
 
-			// attach functio to this property in each <td>
 			value = obj[prop];
 
 		} else if (isTargetProp(prop)) {
@@ -562,7 +584,9 @@ function tabularTableData(obj) {
 		
 		}
 
-		tableData += "<td>" + value.split(',')[0] + "</td>";
+		var td = document.createElement('td');
+		td.innerHTML = value.split(',')[0];
+		tableData.push(td);
 
 	}
 
@@ -584,14 +608,12 @@ function listData(array) {
 
 	var table = createTable(array, 'Tabular Data', tabularTableData);
 
-	dataColumn.innerHTML += table;
+	dataColumn.appendChild(table);
 
 	listReturnedAmount(array.length);
 }
 
 function initiateStats(array) {
-	
-	console.log(array.length);
 
 	var monthly = populateArray(12);
 	var daily = populateArray(7);
