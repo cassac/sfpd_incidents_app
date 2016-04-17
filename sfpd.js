@@ -95,7 +95,7 @@ function generateHtmlMenuOption(item) {
 function populateMenus(array, menuType) {
 
 	var options = '';
-	var filters = window.document.getElementById(menuType);
+	var filters = document.getElementById(menuType);
 	var existingFilters = getCollectionValues(filters);
 
 	for (var item in array) {
@@ -162,7 +162,7 @@ function getIncidents(array) {
 
 }
 
-var filterFormSubmitBtn = window.document.getElementById('filterSubmit');
+var filterFormSubmitBtn = document.getElementById('filterSubmit');
 
 filterFormSubmitBtn.addEventListener('click', function(e) { 
 
@@ -463,7 +463,7 @@ function constructUrl(params, outputtype) {
 	}
 
 
-	window.document.getElementById('dataColumn').innerHTML = createQueryDiv(urlExtensions, limit);
+	document.getElementById('dataColumn').innerHTML = createQueryDiv(urlExtensions, limit);
 
 	if (outputtype == 'graph') {
 
@@ -503,11 +503,19 @@ function normalizeStats(array) {
 }
 
 function distributionTableData(amount) {
-	var tds = '';
+
+	var tableData = [];
+
 	for (var i = 0; i < amount; i++) {
-		tds += '<td></td>';
+
+		var td = document.createElement('td');
+
+		tableData.push(td);
+
 	}
-	return tds;
+
+	return tableData;
+
 }
 
 function createTable(array, title, f) {
@@ -531,7 +539,7 @@ function createTable(array, title, f) {
 		tr.appendChild(th);
 
 		tdArray = f(array[el]);
-		 console.log(tdArray);
+
 		tdArray.forEach(function(td) {
 
 			tr.appendChild(td)
@@ -539,7 +547,6 @@ function createTable(array, title, f) {
 		});
 
 		tbody.appendChild(tr);
-
 
 	}
 
@@ -597,14 +604,14 @@ function tabularTableData(obj) {
 
 function listReturnedAmount(amount) {
 
-	var span = window.document.getElementById('amountSpan');
+	var span = document.getElementById('amountSpan');
 	span.innerHTML = 'Returned ' + amount + ' incidents using the filters below:';
 
 }
 
 function listData(array) {
 
-	var dataColumn = window.document.getElementById('dataColumn');
+	var dataColumn = document.getElementById('dataColumn');
 
 	var table = createTable(array, 'Tabular Data', tabularTableData);
 
@@ -636,8 +643,15 @@ function initiateStats(array) {
 	var dailyNormalized = createTable(normalizeStats(daily), 'Daily', distributionTableData);
 	var hourlyNormalized = createTable(normalizeStats(hourly), 'Hourly', distributionTableData);
 
-	window.document.getElementById('dataColumn').innerHTML += hourlyNormalized +
-		dailyNormalized + monthlyNormalized;
+	var dataColumn = document.getElementById('dataColumn');
+	var div = document.createElement('div');
+
+	div.appendChild(hourlyNormalized);
+	div.appendChild(dailyNormalized);
+	div.appendChild(monthlyNormalized);
+
+	dataColumn.appendChild(div);
+
 
 	listReturnedAmount(array.length);
 
