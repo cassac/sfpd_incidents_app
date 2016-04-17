@@ -162,9 +162,7 @@ function getIncidents(array) {
 
 }
 
-var filterFormSubmitBtn = document.getElementById('filterSubmit');
-
-filterFormSubmitBtn.addEventListener('click', function(e) { 
+document.getElementById('filterSubmit').onclick = function(e) { 
 
 	document.getElementById('loading').style.display='block';
 
@@ -174,9 +172,7 @@ filterFormSubmitBtn.addEventListener('click', function(e) {
 
 	parseForm(form);
 
-
-
-});
+};
 
 
 function properOrder(arg1, arg2) {
@@ -563,7 +559,7 @@ function createTable(array, title, f) {
 function viewIncidentDetails(event) {
 
 	document.getElementById('modal').style.display = 'block';
-	
+
 	var incidentId = event.target.innerText;
 	
 	console.log('i was clicked', incidentId);
