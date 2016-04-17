@@ -523,11 +523,14 @@ function createTable(array, title, f) {
 	var table = document.createElement('table');
 	var tbody = document.createElement('tbody');
 	var thead = document.createElement('thead');
+	var tr = document.createElement('tr');
 	var th = document.createElement('th');
 
 	table.setAttribute('class', title.split(' ').join(''));
 	th.innerHTML = title;
-	thead.appendChild(th);
+	tr.appendChild(th);
+	thead.appendChild(tr);
+	table.appendChild(thead);
 
 	for (var el in array) {
 
