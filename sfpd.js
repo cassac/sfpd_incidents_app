@@ -174,6 +174,12 @@ document.getElementById('filterSubmit').onclick = function(e) {
 
 };
 
+document.getElementById('modal').onclick = function(e) { 
+
+	e.target.style.display = 'none';
+
+};
+
 
 function properOrder(arg1, arg2) {
 
