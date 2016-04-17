@@ -620,6 +620,20 @@ function listData(array) {
 	listReturnedAmount(array.length);
 }
 
+function appendTables(targetEl, array) {
+
+	array.forEach(function(el) {
+		
+		var div = document.createElement('div');
+		div.appendChild(el);
+		targetEl.appendChild(div);
+
+	})
+
+	return targetEl;
+
+}
+
 function initiateStats(array) {
 
 	var monthly = populateArray(12);
@@ -644,14 +658,8 @@ function initiateStats(array) {
 	var hourlyNormalized = createTable(normalizeStats(hourly), 'Hourly', distributionTableData);
 
 	var dataColumn = document.getElementById('dataColumn');
-	var div = document.createElement('div');
 
-	div.appendChild(hourlyNormalized);
-	div.appendChild(dailyNormalized);
-	div.appendChild(monthlyNormalized);
-
-	dataColumn.appendChild(div);
-
+	appendTables(dataColumn, [hourlyNormalized, dailyNormalized, monthlyNormalized]);
 
 	listReturnedAmount(array.length);
 
