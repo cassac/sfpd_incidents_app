@@ -562,9 +562,12 @@ function createTable(array, title, f) {
 
 function viewIncidentDetails(event) {
 
-	var incidentId = event.target.innerText;
-	console.log('i was clicked', incidentId);
+	document.getElementById('modal').style.display = 'block';
 	
+	var incidentId = event.target.innerText;
+	
+	console.log('i was clicked', incidentId);
+
 }
 
 function tabularTableData(obj) {
