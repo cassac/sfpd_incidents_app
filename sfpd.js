@@ -560,6 +560,13 @@ function createTable(array, title, f) {
 
 }
 
+function viewIncidentDetails(event) {
+
+	var incidentId = event.target.innerText;
+	console.log('i was clicked', incidentId);
+	
+}
+
 function tabularTableData(obj) {
 
 	var targetProp = ['category', 'pddistrict', 'time'];
@@ -596,6 +603,13 @@ function tabularTableData(obj) {
 
 		var td = document.createElement('td');
 		td.innerHTML = value.split(',')[0];
+
+		if (prop == 'incidntnum') {
+
+			td.onclick = viewIncidentDetails;
+
+		}
+
 		tableData.push(td);
 
 	}
