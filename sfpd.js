@@ -175,9 +175,12 @@ document.getElementById('filterSubmit').onclick = function(e) {
 
 };
 
-document.getElementById('modal').onclick = function(e) { 
 
-	e.target.style.display = 'none';
+document.getElementById('modalDiv').onclick = function() { 
+
+	// Explicitly controls element because modalDiv's children
+	// may be inadvertently clicked
+	document.getElementById('modalDiv').style.display='none';
 
 };
 
@@ -565,12 +568,13 @@ function createTable(array, title, f) {
 
 function displayModalDiv(array) {
 
-	var modalTitle = document.getElementById('modalTitle');
 	var modalContent = document.getElementById('modalContent');
+
+	modalContent.innerText = '';
 
 	var incidents = array.forEach(function(el, idx) {
 
-		modalContent.innerHTML += getIncidentObj(el).report;
+		modalContent.innerText += getIncidentObj(el).report;
 
 	})
 
@@ -581,7 +585,11 @@ function viewIncidentDetails(event) {
 	var incidentId = event.target.innerText;
 	var url = BASE_URL.concat('incidntnum=', incidentId);
 
-	document.getElementById('modal').style.display = 'block';
+	var modalDiv = document.getElementById('modalDiv');
+	var modalTitle = document.getElementById('modalTitle');
+
+	modalTitle.innerText = 'Incident #'.concat(incidentId);	
+	modalDiv.style.display = 'block';
 
 	requestData(url, displayModalDiv);
 
