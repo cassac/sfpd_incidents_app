@@ -56,11 +56,11 @@ function getIncidentObj(incident) {
 
 }
 
-function requestData(url, f) {
+function requestData(url, funct) {
 
 	var xhttp = new XMLHttpRequest();
 	
-	xhttp.onreadystatechange = function() {
+	xhttp.onreadystatechange = function xhttpRequestData() {
 
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
 
@@ -68,7 +68,7 @@ function requestData(url, f) {
 
 			var data = JSON.parse(xhttp.responseText);
 
-			f(data);
+			funct(data);
 			createMenus(data);
 
 		}
@@ -163,7 +163,7 @@ function getIncidents(array) {
 
 }
 
-document.getElementById('filterSubmit').onclick = function(e) { 
+document.getElementById('filterSubmit').onclick = function submitForm(e) { 
 
 	document.getElementById('loading').style.display='block';
 
@@ -176,7 +176,7 @@ document.getElementById('filterSubmit').onclick = function(e) {
 };
 
 
-document.getElementById('modalDiv').onclick = function() { 
+document.getElementById('modalDiv').onclick = function modalClick() { 
 
 	// Explicitly controls element because modalDiv's children
 	// may be inadvertently clicked
@@ -193,7 +193,7 @@ function properOrder(arg1, arg2) {
 
 function areDatesEmptyOrValid(dateStart, dateEnd) {
 
-	var invalidDateAlert = function() {
+	var invalidDateAlert = function invalidDateAlert() {
 
 			alert('Invalid start date. Use correct format YYYY-MM-DD.');
 		
@@ -250,7 +250,7 @@ function valid24HrTimeFormat(time) {
 
 function areTimesEmptyOrValid(timeStart, timeEnd) {
 
-	var invalidTimeAlert = function() {
+	var invalidTimeAlert = function invalidTimeAlert() {
 		
 			alert('Invalid start time. Use 24 hr format HH:MM (ex. 08:00, 19:00)');
 		
@@ -520,7 +520,7 @@ function distributionTableData(amount) {
 
 }
 
-function createTable(array, title, f) {
+function createTable(array, title, funct) {
 
 	var table = document.createElement('table');
 	var tbody = document.createElement('tbody');
@@ -543,7 +543,7 @@ function createTable(array, title, f) {
 		th.innerHTML = el;
 		tr.appendChild(th);
 
-		tdArray = f(array[el]);
+		tdArray = funct(array[el]);
 
 		tdArray.forEach(function(td) {
 
