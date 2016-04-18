@@ -55,7 +55,10 @@ td {
 }
 .TabularData td {
   background-color: #FFF;
-  border-bottom: 1px solid black;
+  text-align: center;
+}
+.TabularData tr {
+  border-top: 1px solid black;
 }
 #filtersColumn {
   border: 1px solid black;
