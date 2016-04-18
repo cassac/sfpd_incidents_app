@@ -3,11 +3,6 @@
 (function(){
 
 var BASE_URL = "https://data.sfgov.org/resource/cuks-n6tp.json?";
-/*
-Reference: https://dev.socrata.com/foundry/data.sfgov.org/cuks-n6tp
-New endpoint: `cuks-n6tp.json`
-Old endpoint: `tmnf-yvry.json`
-*/
 
 function Incident(address, category, date, dayofweek, descript, incidntnum, location, pddistrict,
                   pdid, resolution, time, x, y) {
@@ -95,7 +90,6 @@ function populateMenus(array, menuType) {
 }
 
 function createMenus(array) {
-
   var menuTypes = {
     category: [],
     dayofweek: [],
@@ -136,13 +130,13 @@ document.getElementById('filterSubmit').onclick = function submitForm(e) {
   parseForm(form);
 }
 
-
 document.getElementById('modalDiv').onclick = function modalClick() {
-  // Explicitly controls element because modalDiv's children
-  // may be inadvertently clicked
+  /* 
+  Explicitly references element instead of using the event handlers arguments
+  because modalDiv's children may inadvertently be clicked
+  */
   document.getElementById('modalDiv').style.display = 'none';
 }
-
 
 function properOrder(arg1, arg2) {
 
@@ -351,7 +345,6 @@ function createQueryDiv(array, limit) {
 }
 
 function constructUrl(params, outputtype) {
-
   var limit;
   var urlExtensions = [];
   var url = BASE_URL.concat('$limit=');
@@ -440,6 +433,7 @@ function createTable(array, title, funct) {
   table.appendChild(thead);
 
   for (var el in array) {
+    var tdArray;
     var tr = document.createElement('tr');
     var th = document.createElement('th');
     var td = document.createElement('td');
@@ -493,6 +487,7 @@ function tabularTableData(obj) {
 
   for (var prop in obj) {
     var value;
+    var td = document.createElement('td');
 
     if (prop == 'date') {
       value = new Date(obj.date).toDateString();
@@ -504,14 +499,11 @@ function tabularTableData(obj) {
       continue;
     }
 
-    var td = document.createElement('td');
     td.innerHTML = value.split(',')[0];
 
     if (prop == 'incidntnum') {
-
       td.setAttribute('class', 'incidentTd')
       td.onclick = viewIncidentDetails;
-
     }
 
     tableData.push(td);
@@ -573,10 +565,9 @@ function initiateStats(array) {
 
 }
 
-
 document.getElementById('loading').style.display='block';
 
-// Initial API call to populate create and populate filter menus
+// Initial API call to populate filter menus
 requestData(BASE_URL+'$limit=2000', createMenus);
 
 })();
