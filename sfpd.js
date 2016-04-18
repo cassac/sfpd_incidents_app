@@ -1,3 +1,5 @@
+'use strict';
+
 (function(){
 
 var BASE_URL = "https://data.sfgov.org/resource/cuks-n6tp.json?";
@@ -7,705 +9,574 @@ New endpoint: `cuks-n6tp.json`
 Old endpoint: `tmnf-yvry.json`
 */
 
-function Incident(address, category, date, dayofweek, descript,
-					incidntnum, location, pddistrict, pdid,
-					resolution, time, x, y) {
+function Incident(address, category, date, dayofweek, descript, incidntnum, location, pddistrict,
+                  pdid, resolution, time, x, y) {
 
-	this.incidntnum = incidntnum;
-	this.date = date;
-	this.time = time;
-	this.address = address;
-	this.category = category;
-	this.dayofweek = dayofweek;
-	this.descript = descript;
-	this.location = location;
-	this.pddistrict = pddistrict;
-	this.pdid = pdid;
-	this.resolution = resolution;
-	this.x = x;
-	this.y = y;
+  this.incidntnum = incidntnum;
+  this.date = date;
+  this.time = time;
+  this.address = address;
+  this.category = category;
+  this.dayofweek = dayofweek;
+  this.descript = descript;
+  this.location = location;
+  this.pddistrict = pddistrict;
+  this.pdid = pdid;
+  this.resolution = resolution;
+  this.x = x;
+  this.y = y;
 
 }
 
 Incident.prototype.report = function report() {
-	
-	return ' On ' + new Date(this.date).toDateString() + ' at ' + this.time +' in the ' +
-			this.pddistrict + ' district at ' + this.address + ' there was a(n) "' +
-			this.category + '" incident - (PD ID: '+ this.pdid+'). ';
+  var thisDate = new Date(this.date);
 
-}
+  return ' On ' + thisDate.toDateString() + ' at ' + this.time +' in the ' +
+    this.pddistrict + ' district at ' + this.address + ' there was a(n) "' +
+    this.category + '" incident - (PD ID: '+ this.pdid +'). ';
+
+};
 
 function getIncidentObj(incident) {
+  var newIncident = new Incident();
 
-	var newIncident = new Incident();
+  for (var item in incident) {
+    newIncident[item] = incident[item];
+  }
 
-	for (var item in incident) {
-
-		newIncident[item] = incident[item];
-
-	}
-
-	return newIncident;
+  return newIncident;
 
 }
 
 function requestData(url, funct) {
+  var xhttp = new XMLHttpRequest();
 
-	var xhttp = new XMLHttpRequest();
-	
-	xhttp.onreadystatechange = function xhttpRequestData() {
+  xhttp.onreadystatechange = function xhttpRequestData() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById('loading').style.display='none';
+      var data = JSON.parse(xhttp.responseText);
+      funct(data);
+      createMenus(data);
+    }
+  };
 
-		if (xhttp.readyState == 4 && xhttp.status == 200) {
+  xhttp.open('GET', url, true);
+  xhttp.send();
 
-			document.getElementById('loading').style.display='none';
-
-			var data = JSON.parse(xhttp.responseText);
-
-			funct(data);
-			createMenus(data);
-
-		}
-
-	};
-
-	xhttp.open('GET', url, true);
-
-	xhttp.send();
-
-};
+}
 
 function getCollectionValues(collection) {
 
-	return [].slice.call(collection).map(function(item) { return item.value });
+  return [].slice.call(collection).map(function(item) { return item.value });
 
 }
 
 function generateHtmlMenuOption(item) {
 
-	return '<option value="' + item + '">' + item + '</option>';
+  return '<option value="' + item + '">' + item + '</option>';
 
 }
 
 function populateMenus(array, menuType) {
+  var options = '';
+  var filters = document.getElementById(menuType);
+  var existingFilters = getCollectionValues(filters);
 
-	var options = '';
-	var filters = document.getElementById(menuType);
-	var existingFilters = getCollectionValues(filters);
+  for (var item in array) {
+    if (existingFilters.indexOf(array[item]) == -1) {
+      options += generateHtmlMenuOption(array[item]);
+    }
+  }
 
-	for (var item in array) {
-
-		if (existingFilters.indexOf(array[item]) == -1) {
-		
-			options += generateHtmlMenuOption(array[item]);
-		
-		}
-	
-	}
-
-	if (options.length>0) {
-
-		filters.innerHTML += options;
-
-	}
-
+  if (options.length>0) {
+    filters.innerHTML += options;
+  }
 
 }
 
 function createMenus(array) {
 
-	var menuTypes = {
-		category: [],
-		dayofweek: [],
-		pddistrict: [],
-		resolution: []
-	}
+  var menuTypes = {
+    category: [],
+    dayofweek: [],
+    pddistrict: [],
+    resolution: []
+  }
 
-	for (var item in array) {
+  for (var item in array) {
+    var incident = array[item];
+    for (var type in menuTypes) {
+      if (menuTypes[type].indexOf(incident[type]) === -1) {
+        menuTypes[type].push(incident[type]);
+      }
+    }
+  }
 
-		var incident = array[item];
-
-		for (var type in menuTypes) {
-
-			if (menuTypes[type].indexOf(incident[type]) === -1) {
-
-				menuTypes[type].push(incident[type]);
-
-			}
-		}
-	}
-	
-	for (var menu in menuTypes) {
-
-		populateMenus(menuTypes[menu], menu);
-
-	}
+  for (var menu in menuTypes) {
+    populateMenus(menuTypes[menu], menu);
+  }
 
 }
 
 function getIncidents(array) {
+  incidents = [];
 
-	incidents = [];
+  for (var incident in array) {
+    incidents.push(array[incident]);
+  }
 
-	for (var incident in array) {
-
-		incidents.push(array[incident]);
-
-	}
-
-	return incidents;
+  return incidents;
 
 }
 
-document.getElementById('filterSubmit').onclick = function submitForm(e) { 
-
-	document.getElementById('loading').style.display='block';
-
-	var form = document.getElementById('filterForm');
-
-	e.preventDefault();
-
-	parseForm(form);
-
-};
+document.getElementById('filterSubmit').onclick = function submitForm(e) {
+  document.getElementById('loading').style.display='block';
+  var form = document.getElementById('filterForm');
+  e.preventDefault();
+  parseForm(form);
+}
 
 
-document.getElementById('modalDiv').onclick = function modalClick() { 
-
-	// Explicitly controls element because modalDiv's children
-	// may be inadvertently clicked
-	document.getElementById('modalDiv').style.display = 'none';
-
-};
+document.getElementById('modalDiv').onclick = function modalClick() {
+  // Explicitly controls element because modalDiv's children
+  // may be inadvertently clicked
+  document.getElementById('modalDiv').style.display = 'none';
+}
 
 
 function properOrder(arg1, arg2) {
 
-	return arg1 < arg2;
+  return arg1 < arg2;
 
 }
 
 function areDatesEmptyOrValid(dateStart, dateEnd) {
+  var invalidDateAlert = function invalidDateAlert() {
+      alert('Invalid start date. Use correct format YYYY-MM-DD.');
+    }
 
-	var invalidDateAlert = function invalidDateAlert() {
+  if (dateStart) {
+    dateStart = new Date(dateStart);
+  }
 
-			alert('Invalid start date. Use correct format YYYY-MM-DD.');
-		
-		}
+  if (dateEnd) {
+    dateEnd = new Date(dateEnd);
+  }
 
-	if (dateStart) {
+  if (dateStart && dateStart == 'Invalid Date') {
+    invalidDateAlert();
 
-		dateStart = new Date(dateStart);
+    return false;
 
-	}
+  }
 
-	if (dateEnd) {
+  if (dateEnd && dateEnd == 'Invalid Date') {
+    invalidDateAlert();
 
-		dateEnd = new Date(dateEnd);
+    return false;
 
-	}
+  }
 
-	if (dateStart && dateStart == 'Invalid Date') {
+  if (dateStart && dateEnd) {
+    if (!properOrder(dateStart, dateEnd)) {
+      alert('Start date must be prior to end date')
 
-		invalidDateAlert();
+      return false;
 
-		return false;
+    }
+  }
 
-	}
-
-	if (dateEnd && dateEnd == 'Invalid Date') {
-
-		invalidDateAlert();
-
-		return false;
-
-	}	
-
-	if (dateStart && dateEnd) {
-		
-		if (!properOrder(dateStart, dateEnd)) {
-		
-			alert('Start date must be prior to end date')
-		
-			return false;
-
-		}
-	}
-
-	return true;
+  return true;
 
 }
 
 function valid24HrTimeFormat(time) {
 
-	return time.search('^(?:[0-1][0-9]|2[0-3])(?::[0-5][0-9])$') > -1;
+  return time.search('^(?:[0-1][0-9]|2[0-3])(?::[0-5][0-9])$') > -1;
 
 }
 
 function areTimesEmptyOrValid(timeStart, timeEnd) {
 
-	var invalidTimeAlert = function invalidTimeAlert() {
-		
-			alert('Invalid start time. Use 24 hr format HH:MM (ex. 08:00, 19:00)');
-		
-		}
+  var invalidTimeAlert = function invalidTimeAlert() {
+      alert('Invalid start time. Use 24 hr format HH:MM (ex. 08:00, 19:00)');
+    }
 
-	if (timeStart && !valid24HrTimeFormat(timeStart)) {
-		
-		invalidTimeAlert();
-		
-		return false;
+  if (timeStart && !valid24HrTimeFormat(timeStart)) {
+    invalidTimeAlert();
 
-	}
+    return false;
 
-	if (timeEnd && !valid24HrTimeFormat(timeEnd)) {
-		
-		invalidTimeAlert();
+  }
 
-		return false;
+  if (timeEnd && !valid24HrTimeFormat(timeEnd)) {
+    invalidTimeAlert();
 
-	}
+    return false;
 
-	if (timeStart && timeEnd) {
+  }
 
-		if (!properOrder(timeStart, timeEnd)) {
+  if (timeStart && timeEnd) {
+    if (!properOrder(timeStart, timeEnd)) {
+      alert('Start time must be prior to end time');
 
-			alert('Start time must be prior to end time');
+      return false;
 
-			return false;
+    }
+  }
 
-		}
-	}
-
-	return true;
+  return true;
 
 }
 
 function parseForm(form) {
+  var elements = form.elements;
+  var outputtype = form.outputType.value;
+  var category = getCollectionValues(elements.category.selectedOptions);
+  var dayofweek= getCollectionValues(elements.dayofweek.selectedOptions);
+  var pddistrict = getCollectionValues(elements.pddistrict.selectedOptions);
+  var resolution = getCollectionValues(elements.resolution.selectedOptions);
+  var dateStart = elements.dateStart.value.trim();
+  var dateEnd = elements.dateEnd.value.trim();
+  var timeStart = elements.timeStart.value.trim();
+  var timeEnd = elements.timeEnd.value.trim();
+  var limit = elements.limit.value.trim();
+  var urlParameters = {
+    category: category,
+    dayofweek: dayofweek,
+    pddistrict: pddistrict,
+    resolution: resolution,
+    date: [dateStart, dateEnd],
+    time: [timeStart, timeEnd],
+    limit: limit
+  }
 
-	var elements = form.elements;
-	var outputtype = form.outputType.value;
-	var category = getCollectionValues(elements.category.selectedOptions);
-	var dayofweek= getCollectionValues(elements.dayofweek.selectedOptions);
-	var pddistrict = getCollectionValues(elements.pddistrict.selectedOptions);
-	var resolution = getCollectionValues(elements.resolution.selectedOptions);
-	var dateStart = elements.dateStart.value.trim();
-	var dateEnd = elements.dateEnd.value.trim();
-	var timeStart = elements.timeStart.value.trim();
-	var timeEnd = elements.timeEnd.value.trim();
-	var limit = elements.limit.value.trim();
-
-
-	var urlParameters = {
-		category: category,
-		dayofweek: dayofweek,
-		pddistrict: pddistrict,
-		resolution: resolution,
-		date: [dateStart, dateEnd],
-		time: [timeStart, timeEnd],
-		limit: limit
-	}
-
-	if (areDatesEmptyOrValid(dateStart, dateEnd) && areTimesEmptyOrValid(timeStart, timeEnd)) {
-	
-		constructUrl(urlParameters, outputtype);
-	
-	} else {
-
-		document.getElementById('loading').style.display='none';
-	
-	}
+  if (areDatesEmptyOrValid(dateStart, dateEnd) && areTimesEmptyOrValid(timeStart, timeEnd)) {
+    constructUrl(urlParameters, outputtype);
+  } else {
+    document.getElementById('loading').style.display='none';
+  }
 
 }
 
 function formatUrlDateAndTimeParameters(type, array) {
+  var start = array[0];
+  var end = array[1];
 
-	var start = array[0];
-	var end = array[1];
+  if (!start && !end) {
 
-	if (!start && !end) {
-	
-		return false;
-	
-	} else if (start&& end) {
-	
-		return type + " between '" + start + "' and '" + end + "'";
-	
-	} else if (start && !end) {
-	
-		return type + " > '" + start + "'";
-	
-	} else {
-	
-		return type + " < '" + end + "'";
-	
-	}
+    return false;
+
+  } else if (start&& end) {
+
+    return type + " between '" + start + "' and '" + end + "'";
+
+  } else if (start && !end) {
+
+    return type + " > '" + start + "'";
+
+  } else {
+
+    return type + " < '" + end + "'";
+
+  }
 
 }
 
 function formatUrlStringParameters(type, array) {
+  if (array.length && array[0]) {
 
-	if (array.length && array[0]) {
+    return type + " IN ('" + array.join("', '") + "')";
 
-		return type + " IN ('" + array.join("', '") + "')";
-	
-	} else {
-	
-		return false;
-	
-	}
+  } else {
+
+    return false;
+
+  }
 
 }
 
 
 function stringValueExists(param) {
+  if (typeof param != 'undefined' && param.length) {
 
-	if (typeof param != 'undefined' && param.length) {
+    return true;
 
-		return true;
+  } else {
 
-	} else {
+    return false;
 
-		return false;
-
-	}
+  }
 
 }
 
 function dateOrTimeValueExists(param) {
 
-	return param.some(function(element) { return element.length > 0});
+  return param.some(function(element) { return element.length > 0});
 
 }
 
 function createLi(ul, item) {
+  var li = document.createElement('li');
+  li.appendChild(document.createTextNode(item));
+  ul.appendChild(li);
 
-	var li = document.createElement('li');
-	li.appendChild(document.createTextNode(item));
-	ul.appendChild(li);
-	return ul;
+  return ul;
 
 }
 
 function createQueryDiv(array, limit) {
+  var div = document.createElement('div');
+  var h3 = document.createElement('h3');
+  var ul = document.createElement('ul');
+  var span = document.createElement('span');
 
-	var div = document.createElement('div');
-	var h3 = document.createElement('h3');
-	var ul = document.createElement('ul');
-	var span = document.createElement('span');
+  ul.setAttribute('class', 'queryUl');
+  span.setAttribute('id', 'amountSpan');
+  createLi(ul, 'Limit: ' + limit);
 
-	ul.setAttribute('class', 'queryUl');
-	span.setAttribute('id', 'amountSpan');
+  if (array.length) {
+    array.forEach(function(el) {
+      createLi(ul, el);
+    });
+  }
 
-	createLi(ul, 'Limit: ' + limit);
+  h3.innerHTML = 'Current Query';
+  div.appendChild(h3);
+  div.appendChild(span);
+  div.appendChild(ul);
 
-	if (array.length) {
-
-		array.forEach(function(el) {
-			createLi(ul, el);
-		});
-
-	}
-
-	h3.innerHTML = 'Current Query';
-	div.appendChild(h3);
-	div.appendChild(span);
-	div.appendChild(ul);
-	
-	return div.innerHTML;
+  return div.innerHTML;
 
 }
 
 function constructUrl(params, outputtype) {
 
-	var limit;
-	var urlExtensions = [];
-	var url = BASE_URL.concat('$limit=');
+  var limit;
+  var urlExtensions = [];
+  var url = BASE_URL.concat('$limit=');
 
-	for (var param in params) {
+  for (var param in params) {
+    var valuesArray = params[param];
 
-		var valuesArray = params[param];
+    if (param == 'time' || param == 'date') {
+      var dateOrTimeValue = formatUrlDateAndTimeParameters(param, valuesArray);
+      if (dateOrTimeValue) {
+        urlExtensions.push(dateOrTimeValue);
+      }
+    } else if (param == 'limit') {
+      limit = valuesArray;
+    } else {
+      var stringValue = formatUrlStringParameters(param, valuesArray);
+      if (stringValue) {
+        urlExtensions.push(stringValue);
+      }
+    }
 
-		if (param == 'time' || param == 'date') {
-			
-			var dateOrTimeValue = formatUrlDateAndTimeParameters(param, valuesArray);
-			
-			if (dateOrTimeValue) {
+  }
 
-				urlExtensions.push(dateOrTimeValue);
+  url = url.concat(limit);
 
-			}
+  if (urlExtensions.length) {
+    url += '&$where='.concat(urlExtensions.join(" AND "));
+  }
 
-		} else if (param == 'limit') {
+  document.getElementById('dataColumn').innerHTML = createQueryDiv(urlExtensions, limit);
 
-			limit = valuesArray;
-
-		} else {
-
-			var stringValue = formatUrlStringParameters(param, valuesArray);
-			
-			if (stringValue) {
-
-				urlExtensions.push(stringValue);
-
-			}
-			
-		}
-
-	}
-
-	url = url.concat(limit);
-
-	if (urlExtensions.length) {
-
-		url += '&$where='.concat(urlExtensions.join(" AND "));
-
-	}
-
-	document.getElementById('dataColumn').innerHTML = createQueryDiv(urlExtensions, limit);
-
-	if (outputtype == 'graph') {
-
-		requestData(url, initiateStats);
-
-	} else {
-
-		requestData(url, listData);
-
-	}
-
+  if (outputtype == 'graph') {
+    requestData(url, initiateStats);
+  } else {
+    requestData(url, listData);
+  }
 
 }
 
 
 function populateArray(length) {
-	var array = [];
-	for (var i = 0; i < length; i++) {
-		array.push(0);
-	}
-	return array;
+  var array = [];
+
+  for (var i = 0; i < length; i++) {
+    array.push(0);
+  }
+
+  return array;
+
 }
 
 function normalizeStats(array) {
+  var sum = array.reduce(function(p, c) { return p + c; });
 
-	var sum = array.reduce(function(p, c) { return p + c; });
+  for (var el in array) {
+    array[el] = Math.round(((array[el] / sum) * 100));
+  }
 
-	for (var el in array) {
-		array[el] = Math.round(((array[el] / sum) * 100));
-	}
-
-	return array;
+  return array;
 
 }
 
 function distributionTableData(amount) {
+  var tableData = [];
 
-	var tableData = [];
+  for (var i = 0; i < amount; i++) {
+    var td = document.createElement('td');
+    tableData.push(td);
+  }
 
-	for (var i = 0; i < amount; i++) {
-
-		var td = document.createElement('td');
-
-		tableData.push(td);
-
-	}
-
-	return tableData;
+  return tableData;
 
 }
 
 function createTable(array, title, funct) {
+  var table = document.createElement('table');
+  var tbody = document.createElement('tbody');
+  var thead = document.createElement('thead');
+  var tr = document.createElement('tr');
+  var th = document.createElement('th');
 
-	var table = document.createElement('table');
-	var tbody = document.createElement('tbody');
-	var thead = document.createElement('thead');
-	var tr = document.createElement('tr');
-	var th = document.createElement('th');
+  table.setAttribute('class', title.split(' ').join(''));
+  th.innerHTML = title;
+  tr.appendChild(th);
+  thead.appendChild(tr);
+  table.appendChild(thead);
 
-	table.setAttribute('class', title.split(' ').join(''));
-	th.innerHTML = title;
-	tr.appendChild(th);
-	thead.appendChild(tr);
-	table.appendChild(thead);
+  for (var el in array) {
+    var tr = document.createElement('tr');
+    var th = document.createElement('th');
+    var td = document.createElement('td');
+    th.innerHTML = el;
+    tr.appendChild(th);
+    tdArray = funct(array[el]);
+    tdArray.forEach(function(td) {
+      tr.appendChild(td)
+    });
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
 
-	for (var el in array) {
-
-		var tr = document.createElement('tr');
-		var th = document.createElement('th');
-		var td = document.createElement('td');
-
-		th.innerHTML = el;
-		tr.appendChild(th);
-
-		tdArray = funct(array[el]);
-
-		tdArray.forEach(function(td) {
-
-			tr.appendChild(td)
-
-		});
-
-		tbody.appendChild(tr);
-
-	}
-
-	table.appendChild(tbody);
-
-	return table;
-
+  return table;
 
 }
 
 
 function displayModalDiv(array) {
+  var modalContent = document.getElementById('modalContent');
 
-	var modalContent = document.getElementById('modalContent');
-
-	var incidents = array.forEach(function(el, idx) {
-
-		modalContent.innerText += getIncidentObj(el).report();
-
-	})
+  var incidents = array.forEach(function(el, idx) {
+    modalContent.innerText += getIncidentObj(el).report();
+  });
 
 }
 
 function viewIncidentDetails(event) {
-
-	var incidentId = event.target.innerText;
-	var url = BASE_URL.concat('incidntnum=', incidentId);
-
-	var modalDiv = document.getElementById('modalDiv');
-	var modalTitle = document.getElementById('modalTitle');
-	var modalContent = document.getElementById('modalContent');
-
-	modalContent.innerText = '';
-	modalTitle.innerText = 'Incident #'.concat(incidentId);	
-	modalDiv.style.display = 'block';
-
-	requestData(url, displayModalDiv);
+  var incidentId = event.target.innerText;
+  var url = BASE_URL.concat('incidntnum=', incidentId);
+  var modalDiv = document.getElementById('modalDiv');
+  var modalTitle = document.getElementById('modalTitle');
+  var modalContent = document.getElementById('modalContent');
+  modalContent.innerText = '';
+  modalTitle.innerText = 'Incident #'.concat(incidentId);
+  modalDiv.style.display = 'block';
+  requestData(url, displayModalDiv);
 
 }
 
 function tabularTableData(obj) {
+  var targetProp = ['category', 'pddistrict', 'time'];
 
-	var targetProp = ['category', 'pddistrict', 'time'];
+  var isTargetProp = function isTargetProp(item) {
 
-	var isTargetProp = function isTargetProp(item) {
+    return targetProp.indexOf(item) > -1;
 
-		return targetProp.indexOf(item) > -1;
-	
-	}
+  }
 
-	var tableData = [];
-	
-	for (var prop in obj) {
+  var tableData = [];
 
-		var value;
+  for (var prop in obj) {
+    var value;
 
-		if (prop == 'date') {
+    if (prop == 'date') {
+      value = new Date(obj.date).toDateString();
+    } else if (prop == 'incidntnum') {
+      value = obj[prop];
+    } else if (isTargetProp(prop)) {
+      value = obj[prop];
+    } else {
+      continue;
+    }
 
-			value = new Date(obj.date).toDateString();
+    var td = document.createElement('td');
+    td.innerHTML = value.split(',')[0];
 
-		} else if (prop == 'incidntnum') {
+    if (prop == 'incidntnum') {
 
-			value = obj[prop];
+      td.setAttribute('class', 'incidentTd')
+      td.onclick = viewIncidentDetails;
 
-		} else if (isTargetProp(prop)) {
+    }
 
-			value = obj[prop];
-		
-		} else {
+    tableData.push(td);
 
-			continue;
-		
-		}
+  }
 
-		var td = document.createElement('td');
-		td.innerHTML = value.split(',')[0];
-
-		if (prop == 'incidntnum') {
-
-			td.setAttribute('class', 'incidentTd')
-			td.onclick = viewIncidentDetails;
-
-		}
-
-		tableData.push(td);
-
-	}
-
-	return tableData;
+  return tableData;
 
 
 }
 
 function listReturnedAmount(amount) {
-
-	var span = document.getElementById('amountSpan');
-	span.innerHTML = 'Returned ' + amount + ' incidents using the filters below:';
-
+  var span = document.getElementById('amountSpan');
+  span.innerHTML = 'Returned ' + amount + ' incidents using the filters below:';
 }
 
 function listData(array) {
-
-	var dataColumn = document.getElementById('dataColumn');
-
-	var table = createTable(array, 'Tabular Data', tabularTableData);
-
-	dataColumn.appendChild(table);
-
-	listReturnedAmount(array.length);
+  var dataColumn = document.getElementById('dataColumn');
+  var table = createTable(array, 'Tabular Data', tabularTableData);
+  dataColumn.appendChild(table);
+  listReturnedAmount(array.length);
 }
 
 function appendTables(targetEl, array) {
+  array.forEach(function(el) {
+    var div = document.createElement('div');
+    div.setAttribute('class', 'tableDiv');
+    div.appendChild(el);
+    targetEl.appendChild(div);
+  })
 
-	array.forEach(function(el) {
-		
-		var div = document.createElement('div');
-		div.setAttribute('class', 'tableDiv');
-		div.appendChild(el);
-		targetEl.appendChild(div);
-
-	})
-
-	return targetEl;
+  return targetEl;
 
 }
 
 function initiateStats(array) {
+  var daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday','Friday', 'Saturday', 'Sunday'];
+  var monthly = populateArray(12);
+  var daily = populateArray(7);
+  var hourly = populateArray(24);
 
-	var daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
-					 'Friday', 'Saturday', 'Sunday'];
-	var monthly = populateArray(12);
-	var daily = populateArray(7);
-	var hourly = populateArray(24);
+  for (var el in array) {
+    var incident = array[el];
+    var month = parseInt(incident.date.split('-')[1]) - 1;
+    var day = daysOfWeek.indexOf(incident.dayofweek);
+    var hour = parseInt(incident.time.split(':')[0]);
+    monthly[month] += 1;
+    daily[day] += 1;
+    hourly[hour] += 1;
+  }
 
-	for (var el in array) {
+  var monthlyNormalized = createTable(normalizeStats(monthly), 'Monthly', distributionTableData);
+  var dailyNormalized = createTable(normalizeStats(daily), 'Daily', distributionTableData);
+  var hourlyNormalized = createTable(normalizeStats(hourly), 'Hourly', distributionTableData);
+  var dataColumn = document.getElementById('dataColumn');
 
-		var incident = array[el];
-		var month = parseInt(incident.date.split('-')[1]) - 1;
-		var day = daysOfWeek.indexOf(incident.dayofweek);
-		var hour = parseInt(incident.time.split(':')[0]);
-
-		monthly[month] += 1;
-		daily[day] += 1;
-		hourly[hour] += 1;
-		
-	}
-
-	var monthlyNormalized = createTable(normalizeStats(monthly), 'Monthly', distributionTableData);
-	var dailyNormalized = createTable(normalizeStats(daily), 'Daily', distributionTableData);
-	var hourlyNormalized = createTable(normalizeStats(hourly), 'Hourly', distributionTableData);
-
-	var dataColumn = document.getElementById('dataColumn');
-
-	appendTables(dataColumn, [hourlyNormalized, dailyNormalized, monthlyNormalized]);
-
-	listReturnedAmount(array.length);
+  appendTables(dataColumn, [hourlyNormalized, dailyNormalized, monthlyNormalized]);
+  listReturnedAmount(array.length);
 
 }
 
 
 document.getElementById('loading').style.display='block';
+
+// Initial API call to populate create and populate filter menus
 requestData(BASE_URL+'$limit=2000', createMenus);
 
 })();
