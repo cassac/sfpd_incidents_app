@@ -83,7 +83,7 @@ function requestData(url, f) {
 
 function getCollectionValues(collection) {
 
-	return [].slice.call(collection).map(function(item){ return item.value });
+	return [].slice.call(collection).map(function(item) { return item.value });
 
 }
 
@@ -199,19 +199,19 @@ function areDatesEmptyOrValid(dateStart, dateEnd) {
 		
 		}
 
-	if (dateStart != '') {
+	if (dateStart) {
 
 		dateStart = new Date(dateStart);
 
 	}
 
-	if (dateEnd != '') {
+	if (dateEnd) {
 
 		dateEnd = new Date(dateEnd);
 
 	}
 
-	if (dateStart != '' && dateStart == 'Invalid Date') {
+	if (dateStart && dateStart == 'Invalid Date') {
 
 		invalidDateAlert();
 
@@ -219,7 +219,7 @@ function areDatesEmptyOrValid(dateStart, dateEnd) {
 
 	}
 
-	if (dateEnd != '' && dateEnd == 'Invalid Date') {
+	if (dateEnd && dateEnd == 'Invalid Date') {
 
 		invalidDateAlert();
 
@@ -227,7 +227,7 @@ function areDatesEmptyOrValid(dateStart, dateEnd) {
 
 	}	
 
-	if (dateStart != '' && dateEnd != '') {
+	if (dateStart && dateEnd) {
 		
 		if (!properOrder(dateStart, dateEnd)) {
 		
@@ -256,7 +256,7 @@ function areTimesEmptyOrValid(timeStart, timeEnd) {
 		
 		}
 
-	if (timeStart != '' && !valid24HrTimeFormat(timeStart)) {
+	if (timeStart && !valid24HrTimeFormat(timeStart)) {
 		
 		invalidTimeAlert();
 		
@@ -264,7 +264,7 @@ function areTimesEmptyOrValid(timeStart, timeEnd) {
 
 	}
 
-	if (timeEnd != '' && !valid24HrTimeFormat(timeEnd)) {
+	if (timeEnd && !valid24HrTimeFormat(timeEnd)) {
 		
 		invalidTimeAlert();
 
@@ -272,7 +272,7 @@ function areTimesEmptyOrValid(timeStart, timeEnd) {
 
 	}
 
-	if (timeStart != '' && timeEnd != '') {
+	if (timeStart && timeEnd) {
 
 		if (!properOrder(timeStart, timeEnd)) {
 
@@ -329,15 +329,15 @@ function formatUrlDateAndTimeParameters(type, array) {
 	var start = array[0];
 	var end = array[1];
 
-	if (start == '' && end == '') {
+	if (!start && !end) {
 	
 		return false;
 	
-	} else if (start != '' && end != '') {
+	} else if (start&& end) {
 	
 		return type + " between '" + start + "' and '" + end + "'";
 	
-	} else if (start != '' && end == '') {
+	} else if (start && !end) {
 	
 		return type + " > '" + start + "'";
 	
@@ -351,7 +351,7 @@ function formatUrlDateAndTimeParameters(type, array) {
 
 function formatUrlStringParameters(type, array) {
 
-	if (array.length > 0 && array[0] != '') {
+	if (array.length && array[0]) {
 
 		return type + " IN ('" + array.join("', '") + "')";
 	
@@ -366,7 +366,7 @@ function formatUrlStringParameters(type, array) {
 
 function stringValueExists(param) {
 
-	if (typeof param != 'undefined' && param.length > 0) {
+	if (typeof param != 'undefined' && param.length) {
 
 		return true;
 
@@ -491,9 +491,6 @@ function populateArray(length) {
 	}
 	return array;
 }
-
-var daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
-	'Friday', 'Saturday', 'Sunday']
 
 function normalizeStats(array) {
 
@@ -683,6 +680,8 @@ function appendTables(targetEl, array) {
 
 function initiateStats(array) {
 
+	var daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
+					 'Friday', 'Saturday', 'Sunday'];
 	var monthly = populateArray(12);
 	var daily = populateArray(7);
 	var hourly = populateArray(24);
