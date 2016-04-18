@@ -25,20 +25,13 @@ function Incident(address, category, date, dayofweek, descript,
 	this.x = x;
 	this.y = y;
 
+}
 
-	Object.defineProperty(this, 'getDateString', {
-		get: function() {
-			return new Date(this.date).toDateString();
-		}
-	});
-
-	Object.defineProperty(this, 'report', {
-		get: function() {
-			return ' On ' + this.getDateString + ' at ' + this.time +' in the ' +
-				this.pddistrict + ' district at ' + this.address + ' there was a(n) "' +
-				this.category + '" incident - (PD ID: '+ this.pdid+'). ';
-		}
-	});
+Incident.prototype.report = function report() {
+	
+	return ' On ' + new Date(this.date).toDateString() + ' at ' + this.time +' in the ' +
+			this.pddistrict + ' district at ' + this.address + ' there was a(n) "' +
+			this.category + '" incident - (PD ID: '+ this.pdid+'). ';
 
 }
 
@@ -569,7 +562,7 @@ function displayModalDiv(array) {
 
 	var incidents = array.forEach(function(el, idx) {
 
-		modalContent.innerText += getIncidentObj(el).report;
+		modalContent.innerText += getIncidentObj(el).report();
 
 	})
 
