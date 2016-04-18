@@ -34,9 +34,9 @@ function Incident(address, category, date, dayofweek, descript,
 
 	Object.defineProperty(this, 'report', {
 		get: function() {
-			return 'On ' + this.getDateString + ' at ' + this.time +' in the ' +
-				this.pddistrict + ' district there was a(n) "' + this.category + 
-				'" incident.';
+			return ' On ' + this.getDateString + ' at ' + this.time +' in the ' +
+				this.pddistrict + ' district at ' + this.address + ' there was a(n) "' +
+				this.category + '" incident - (PD ID: '+ this.pdid+'). ';
 		}
 	});
 
@@ -570,8 +570,6 @@ function displayModalDiv(array) {
 
 	var modalContent = document.getElementById('modalContent');
 
-	modalContent.innerText = '';
-
 	var incidents = array.forEach(function(el, idx) {
 
 		modalContent.innerText += getIncidentObj(el).report;
@@ -587,7 +585,9 @@ function viewIncidentDetails(event) {
 
 	var modalDiv = document.getElementById('modalDiv');
 	var modalTitle = document.getElementById('modalTitle');
+	var modalContent = document.getElementById('modalContent');
 
+	modalContent.innerText = '';
 	modalTitle.innerText = 'Incident #'.concat(incidentId);	
 	modalDiv.style.display = 'block';
 
