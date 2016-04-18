@@ -24,28 +24,38 @@ div {
 .queryUl {
   text-align: left;
 }
+.tableDiv {
+  border-radius: 5px;
+  border: 1px solid black;
+}
 table {
   border: 1px solid black;
   border-radius: 5px;
   padding: 10px;
+  width: 400px;
+  border:0px;
+  border-collapse:collapse;
+  border-spacing:0px;
 }
 th, td {
-    border-collapse: collapse;
-}
-th, td {
-    text-align: center;
+  text-align:left;
+  width: 1%;
 }
 th {
-
-  padding: 0px;
   margin: 0px;
+  padding: 0px;
+  text-align: center;
 }
 td {
-  border-bottom: 1px solid black;
-  background-color: red;
+  background-color: #CCC;
+  text-align: left;
+}
+.TabularData {
+  width: 100%;
 }
 .TabularData td {
   background-color: #FFF;
+  border-bottom: 1px solid black;
 }
 #filtersColumn {
   border: 1px solid black;
@@ -71,6 +81,11 @@ input {
 }
 #intro ul {
   text-align: left;
+}
+.incidentTd {
+  text-decoration: underline;
+  color: blue;
+  cursor:pointer;
 }
 #modal {
  width: 400px;
