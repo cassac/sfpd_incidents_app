@@ -336,11 +336,11 @@ function formatUrlDateAndTimeParameters(type, array) {
 	
 	} else if (start != '' && end == '') {
 	
-		return type + " > '" + array[0] + "'";
+		return type + " > '" + start + "'";
 	
 	} else {
 	
-		return type + " < '" + array[0] + "'";
+		return type + " < '" + end + "'";
 	
 	}
 
@@ -464,7 +464,6 @@ function constructUrl(params, outputtype) {
 		url += '&$where='.concat(urlExtensions.join(" AND "));
 
 	}
-
 
 	document.getElementById('dataColumn').innerHTML = createQueryDiv(urlExtensions, limit);
 
