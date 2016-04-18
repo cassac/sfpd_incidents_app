@@ -58,7 +58,7 @@ td {
   text-align: center;
 }
 .TabularData tr {
-  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
 #filtersColumn {
   border: 1px solid black;
@@ -90,29 +90,22 @@ input {
   color: blue;
   cursor:pointer;
 }
-#modal {
+#modalDiv {
  width: 400px;
  height: 400px;
  top: 30%;
  left: 30%;
  position: fixed;
- display: none;
  opacity: 0.95;
  background-color: #FFF;
  z-index: 98;
  text-align: center;
  border: 2px solid #000;
+ padding: 25px;
 }
-/*#modalContent {
-  z-index: 99;
-  background-color: #000;
-  position: absolute;
-  width: 400px;
-  height: 300px;
-  top: 30%;
-  left: 50%;
-  margin: -100px 0 0 -150px;
-}*/
+.modal {
+ display: none;
+}
 #loading {
  width: 100%;
  height: 100%;
