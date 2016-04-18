@@ -1,83 +1,77 @@
 <!DOCTYPE html>
-<htmllang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>SFPD Incidents Javascript App</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body>
-  <div id='loading'>
-    <p id='loading-text'>Loading...</p>
-  </div>
-  <div id='modalDiv' class='modal'>
-    <h2 id='modalTitle' class='modal'></h2>
-    <p id='modalContent' class='modal'></p>
-  </div>
-  <h1>Interact with SF Open Data</h1>
-  <div id='filtersColumn'>
-    <h3>Filters</h3>
-    <form id='filterForm'>
-      <span for='category'>Category</span>
-    	<select id='category' name='category' multiple>
-        <option value="">All</option>
-      </select>
-      <span for='dayofweek'>Day of Week</span>
-    	<select id='dayofweek' name='dayofweek' multiple>
-        <option value="">All</option>
-      </select>
-      <span for='pddistrict'>District</span>
-    	<select id='pddistrict' name='pddistrict' multiple>
-        <option value="">All</option>
-      </select>
-      <span for='resolution'>Resolution</span>
-    	<select id='resolution' name='resolution' multiple>
-        <option value="">All</option>
-      </select>
-      <span for='dateStart'>Date Range</span>
-      <input id='dateStart' name='dateStart' type='date' size='8' placeholder='2015-01-01'>
-      <input id='dateEnd' name='dateEnd' type='date' size='8' placeholder='2016-01-01'>
-      <span for='timeStart'>Time Range</span>
-      <input id='timeStart' name='timeStart' type='text' size='4' placeholder='08:00'>
-      <input id='timeEnd' name='timeEnd' type='text' size='4' placeholder='19:00'>
-      <span for='outputType'>Output Type</span>
-      <input type="radio" name="outputType" value="graph" checked> Distribution Graph
-      <br>
-      <input type="radio" name="outputType" value="tabular"> Tabular Data
-      <span for='limit'>Output Limit</span>
-      <select id='limit' name='limit'>
-        <option value="10">10</option>
-        <option value="100">100</option>
-        <option value="500">500</option>
-        <option value="1000">1000</option>
-        <option value="5000">5000</option>
-        <option value="10000">10000</option>
-        <option value="25000">25000</option>
-        <option value="50000">50000</option>
-      </select>
-      <br>
-      <input id='filterSubmit' type='submit' value='Submit'>
-    </form>
-  </div>
-  <div id='dataColumn'>
-    <div id='intro'>
-      <h2>Welcome</h2>
-      <p>This application queries <a href='https://data.sfgov.org/'>SF's Open Data API</a> for local incident reports from the police department. View distribution of hourly, daily, and monthly distribution of incidents and individual reports in tabular data format.</p>
-      <h2>Instructions</h2>
-      <ul>
-        <li>Results use zero-based indexing. Day 0 is Monday and month 3 is April. Time is 24 hour based. Hour 14 is 2:00pm.</li>
-        <li>Use the form on the left to filter data. No selections will return results from every category/date/time.</li>
-        <li>Providing both dates/times will perform a "between" query while providing one (beginning or ending) will perform a "less than" or "greater than" query.</li>
-        <li>Selecting output type "tabular data" with a limit over 1000 results may temporarily freeze your browser.</li>
-        <li>The month view for the "distribution graph" is inaccurate for broad searches because too many incidents are returned from the most recent months.</li>
-      </ul>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SFPD Incidents Javascript App</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <div id='loading'>
+      <p id='loading-text'>Loading...</p>
     </div>
-  </div>
-    <p></p>
-      <p></p>
-<!--   <div id='footer'>
-    <p>Use the filters to make a query.</p>
-  </div> -->
-  <script src="sfpd.js"></script>
-
-</body>
+    <div id='modalDiv' class='modal'>
+      <h2 id='modalTitle' class='modal'></h2>
+      <p id='modalContent' class='modal'></p>
+    </div>
+    <h1>Interact with SF Open Data</h1>
+    <div id='filtersColumn'>
+      <h3>Filters</h3>
+      <form id='filterForm'>
+        <span for='category'>Category</span>
+      	<select id='category' name='category' multiple>
+          <option value="">All</option>
+        </select>
+        <span for='dayofweek'>Day of Week</span>
+      	<select id='dayofweek' name='dayofweek' multiple>
+          <option value="">All</option>
+        </select>
+        <span for='pddistrict'>District</span>
+      	<select id='pddistrict' name='pddistrict' multiple>
+          <option value="">All</option>
+        </select>
+        <span for='resolution'>Resolution</span>
+      	<select id='resolution' name='resolution' multiple>
+          <option value="">All</option>
+        </select>
+        <span for='dateStart'>Date Range</span>
+        <input id='dateStart' name='dateStart' type='date' size='8' placeholder='2015-01-01'>
+        <input id='dateEnd' name='dateEnd' type='date' size='8' placeholder='2016-01-01'>
+        <span for='timeStart'>Time Range</span>
+        <input id='timeStart' name='timeStart' type='text' size='4' placeholder='08:00'>
+        <input id='timeEnd' name='timeEnd' type='text' size='4' placeholder='19:00'>
+        <span for='outputType'>Output Type</span>
+        <input type="radio" name="outputType" value="graph" checked> Distribution Graph
+        <br>
+        <input type="radio" name="outputType" value="tabular"> Tabular Data
+        <span for='limit'>Output Limit</span>
+        <select id='limit' name='limit'>
+          <option value="10">10</option>
+          <option value="100">100</option>
+          <option value="500">500</option>
+          <option value="1000">1000</option>
+          <option value="5000">5000</option>
+          <option value="10000">10000</option>
+          <option value="25000">25000</option>
+          <option value="50000">50000</option>
+        </select>
+        <br>
+        <input id='filterSubmit' type='submit' value='Submit'>
+      </form>
+    </div>
+    <div id='dataColumn'>
+      <div id='intro'>
+        <h2>Welcome</h2>
+        <p>This application queries <a href='https://data.sfgov.org/'>SF's Open Data API</a> for local incident reports from the police department. View distribution of hourly, daily, and monthly distribution of incidents and individual reports in tabular data format.</p>
+        <h2>Instructions</h2>
+        <ul>
+          <li>Results use zero-based indexing. Day 0 is Monday and month 3 is April. Time is 24 hour based. Hour 14 is 2:00pm.</li>
+          <li>Use the form on the left to filter data. No selections will return results from every category/date/time.</li>
+          <li>Providing both dates/times will perform a "between" query while providing one (beginning or ending) will perform a "less than" or "greater than" query.</li>
+          <li>Selecting output type "tabular data" with a limit over 1000 results may temporarily freeze your browser.</li>
+          <li>The month view for the "distribution graph" is inaccurate for broad searches because too many incidents are returned from the most recent months.</li>
+        </ul>
+      </div>
+    </div>
+    <script src="sfpd.js"></script>
+  </body>
 </html>
