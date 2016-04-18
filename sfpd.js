@@ -626,6 +626,7 @@ function tabularTableData(obj) {
 
 		if (prop == 'incidntnum') {
 
+			td.setAttribute('class', 'incidentTd')
 			td.onclick = viewIncidentDetails;
 
 		}
@@ -662,6 +663,7 @@ function appendTables(targetEl, array) {
 	array.forEach(function(el) {
 		
 		var div = document.createElement('div');
+		div.setAttribute('class', 'tableDiv');
 		div.appendChild(el);
 		targetEl.appendChild(div);
 
