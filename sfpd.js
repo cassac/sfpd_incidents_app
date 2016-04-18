@@ -180,7 +180,7 @@ document.getElementById('modalDiv').onclick = function() {
 
 	// Explicitly controls element because modalDiv's children
 	// may be inadvertently clicked
-	document.getElementById('modalDiv').style.display='none';
+	document.getElementById('modalDiv').style.display = 'none';
 
 };
 
@@ -380,7 +380,7 @@ function stringValueExists(param) {
 
 function dateOrTimeValueExists(param) {
 
-	return param.some(function(element){ return element.length > 0});
+	return param.some(function(element) { return element.length > 0});
 
 }
 
@@ -405,7 +405,7 @@ function createQueryDiv(array, limit) {
 
 	createLi(ul, 'Limit: ' + limit);
 
-	if (array.length > 0) {
+	if (array.length) {
 
 		array.forEach(function(el) {
 			createLi(ul, el);
@@ -462,7 +462,7 @@ function constructUrl(params, outputtype) {
 
 	url = url.concat(limit);
 
-	if (urlExtensions.length > 0) {
+	if (urlExtensions.length) {
 
 		url += '&$where='.concat(urlExtensions.join(" AND "));
 
@@ -494,7 +494,7 @@ function populateArray(length) {
 
 function normalizeStats(array) {
 
-	var sum = array.reduce(function(p, c){ return p + c; });
+	var sum = array.reduce(function(p, c) { return p + c; });
 
 	for (var el in array) {
 		array[el] = Math.round(((array[el] / sum) * 100));
