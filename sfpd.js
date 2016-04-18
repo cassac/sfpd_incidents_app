@@ -599,7 +599,7 @@ function tabularTableData(obj) {
 
 	var targetProp = ['category', 'pddistrict', 'time'];
 
-	function isTargetProp(item) {
+	var isTargetProp = function isTargetProp(item) {
 
 		return targetProp.indexOf(item) > -1;
 	
